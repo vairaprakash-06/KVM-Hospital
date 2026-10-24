@@ -78,9 +78,11 @@ if (str_starts_with($uriPath, '/modules/')) {
     $targetFile = __DIR__ . '/..' . $uriPath;
     if (is_dir($targetFile)) {
         $targetFile = rtrim($targetFile, '/') . '/index.php';
+    } elseif (!file_exists($targetFile) && file_exists($targetFile . '.php')) {
+        $targetFile = $targetFile . '.php';
     }
     if (file_exists($targetFile)) {
-        $_SERVER['SCRIPT_NAME'] = $uriPath;
+        $_SERVER['SCRIPT_NAME'] = str_ends_with($uriPath, '.php') ? $uriPath : $uriPath . '.php';
         require $targetFile;
         exit;
     }
@@ -105,8 +107,11 @@ if (str_starts_with($uriPath, '/database/') ||
 
 // 7. General File Dispatcher from project root
 $rootTarget = __DIR__ . '/..' . $uriPath;
+if (!file_exists($rootTarget) && file_exists($rootTarget . '.php')) {
+    $rootTarget = $rootTarget . '.php';
+}
 if (file_exists($rootTarget) && !is_dir($rootTarget)) {
-    $_SERVER['SCRIPT_NAME'] = $uriPath;
+    $_SERVER['SCRIPT_NAME'] = str_ends_with($uriPath, '.php') ? $uriPath : $uriPath . '.php';
     require $rootTarget;
     exit;
 }

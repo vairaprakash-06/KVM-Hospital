@@ -224,6 +224,22 @@ class Database {
                 $pdo->registerCustomFunction('VERSION', fn() => '8.0.35-NexusCare-SQLite');
                 $pdo->registerCustomFunction('CONCAT', fn(...$p) => implode('', $p));
                 $pdo->registerCustomFunction('IFNULL', fn($a, $b) => $a !== null ? $a : $b);
+                $pdo->registerCustomFunction('DATE_FORMAT', function($date, $format) {
+                    if (!$date) return null;
+                    $t = strtotime((string)$date);
+                    if ($t === false) return (string)$date;
+                    $replacements = [
+                        '%Y' => 'Y', '%y' => 'y',
+                        '%m' => 'm', '%c' => 'n',
+                        '%d' => 'd', '%e' => 'j',
+                        '%H' => 'H', '%h' => 'h', '%I' => 'h',
+                        '%i' => 'i', '%s' => 's',
+                        '%p' => 'A', '%b' => 'M', '%M' => 'F',
+                        '%W' => 'l', '%a' => 'D'
+                    ];
+                    $phpFormat = strtr((string)$format, $replacements);
+                    return date($phpFormat, $t);
+                });
                 $pdo->registerCustomFunction('TIMESTAMPDIFF', function($unit, $d1, $d2) {
                     if (!$d1 || !$d2) return 0;
                     $t1 = strtotime((string)$d1);
