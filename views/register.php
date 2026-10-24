@@ -169,6 +169,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
 
+                    <?php if (Database::isSqlite() && empty($error) && empty($success)): ?>
+                        <div class="alert border-0 py-2 px-3 small d-flex align-items-center gap-2 mb-4" style="background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0284c7 !important; color: #0369a1; border-radius: 8px;">
+                            <i class="bi bi-database-check text-primary fs-6"></i>
+                            <div class="flex-grow-1" style="font-size: 0.82rem;">
+                                <strong>Live Demonstration Mode:</strong> New patient registrations will be created and saved in your active session database.
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if ($success): ?>
                         <div class="alert alert-success">
                             <i class="bi bi-check-circle-fill me-2"></i><?= $success ?>

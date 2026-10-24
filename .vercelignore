@@ -3,6 +3,5 @@
 /*.php
 tests/
 docs/
-database/
 .env.example
 .git

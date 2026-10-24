@@ -87,7 +87,9 @@ NexusCare goes beyond simple CRUD operations with five clinical intelligence fea
 
 ## 7. Technology Stack
 - **Backend:** PHP 8.x (Native PDO, Session Management, Prepared Statements)
-- **Database:** MySQL 8.x / MariaDB 10.4+ (InnoDB Engine, Foreign Keys, CHECK Constraints, Views)
+- **Database:** Dual-Engine Architecture
+  - **Production:** Centralized MySQL 8.x / MariaDB 10.4+ (InnoDB Engine, Foreign Keys, CHECK Constraints, Row Locks)
+  - **Serverless / Demo / Viva Review:** High-performance Embedded SQLite with automatic fallback and pre-seeded dataset for seamless zero-configuration execution on Vercel
 - **Frontend:** HTML5, CSS3, JavaScript ES6
 - **UI Framework:** Bootstrap 5.3.2 + Bootstrap Icons
 - **Visualizations:** Chart.js 4.4.1

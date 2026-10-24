@@ -94,7 +94,16 @@ if (file_exists($publicTarget) && !is_dir($publicTarget)) {
     exit;
 }
 
-// 6. General File Dispatcher from project root
+// 6. Security guard: block direct HTTP access to internal app and database files
+if (str_starts_with($uriPath, '/database/') || 
+    str_starts_with($uriPath, '/app/') || 
+    preg_match('/\.(sqlite|sql|env|json|md|log)$/i', $uriPath)) {
+    http_response_code(403);
+    echo '<!DOCTYPE html><html><head><title>403 Forbidden</title></head><body style="font-family:sans-serif;padding:40px;text-align:center;"><h2>403 Forbidden</h2><p>Direct access to internal system files is prohibited.</p></body></html>';
+    exit;
+}
+
+// 7. General File Dispatcher from project root
 $rootTarget = __DIR__ . '/..' . $uriPath;
 if (file_exists($rootTarget) && !is_dir($rootTarget)) {
     $_SERVER['SCRIPT_NAME'] = $uriPath;

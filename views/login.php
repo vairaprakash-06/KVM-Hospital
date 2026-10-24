@@ -287,6 +287,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="bi bi-shield-x me-2"></i><?= e($errorMessage) ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+        <?php elseif (Database::isSqlite()): ?>
+            <div class="alert border-0 py-2 px-3 small d-flex align-items-center gap-2 mb-3" style="background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0284c7 !important; color: #0369a1; border-radius: 8px;">
+                <i class="bi bi-check-circle-fill text-primary fs-6"></i>
+                <div class="flex-grow-1" style="font-size: 0.8rem; line-height: 1.35;">
+                    <strong>Live Demonstration Database Active:</strong> Pre-seeded with 15 departments & 9 roles. Click any role shortcut below to sign in instantly!
+                </div>
+            </div>
         <?php endif; ?>
 
         <form method="POST" action="login.php">
