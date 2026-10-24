@@ -116,7 +116,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Filter by ward
 $filterWard = !empty($_GET['ward_id']) ? (int)$_GET['ward_id'] : null;
 
-$wards = $db->query("SELECT * FROM `wards` ORDER BY id ASC")->fetchAll();
+$wards = $db->query("
+    SELECT w.*, COUNT(b.id) AS bed_count 
+    FROM `wards` w 
+    LEFT JOIN `beds` b ON w.id = b.ward_id 
+    GROUP BY w.id 
+    ORDER BY w.id ASC
+")->fetchAll();
 $beds  = $bedService->getOccupancyMatrix($filterWard);
 $stats = $bedService->getBedStats();
 
@@ -228,23 +234,31 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
     <?php foreach ($wards as $w): ?>
         <a href="index.php?ward_id=<?= $w['id'] ?>" 
            class="btn btn-sm <?= $filterWard === (int)$w['id'] ? 'btn-dark' : 'btn-outline-secondary' ?>">
-            <?= e($w['name']) ?>
+            <?= e($w['name']) ?> <span class="badge bg-secondary ms-1"><?= (int)$w['bed_count'] ?></span>
         </a>
     <?php endforeach; ?>
 </div>
 
 <!-- Interactive BedMatrix Grid -->
 <div class="nexus-card mb-4">
-    <div class="nexus-card-header">
+    <div class="nexus-card-header flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
             <i class="bi bi-grid-fill text-primary"></i>
             <h6 class="fw-bold mb-0">Dynamic Bed Grid Visualizer</h6>
+            <span class="badge bg-light text-dark border ms-2" id="visibleBedCount"><?= count($beds) ?> Beds Shown</span>
         </div>
-        <div class="d-flex align-items-center gap-3 small text-secondary">
-            <span><span class="badge badge-bed-available me-1">&bull;</span> Available</span>
-            <span><span class="badge badge-bed-occupied me-1">&bull;</span> Occupied</span>
-            <span><span class="badge badge-bed-cleaning me-1">&bull;</span> Cleaning</span>
-            <span><span class="badge badge-bed-reserved me-1">&bull;</span> Reserved</span>
+        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+            <div class="input-group input-group-sm" style="max-width: 240px;">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="bedSearchInput" class="form-control border-start-0" placeholder="Filter bed # or patient..." oninput="filterBedGrid()">
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-secondary active" id="filterBtnAll" onclick="filterByStatus('all', this)">All</button>
+                <button type="button" class="btn btn-outline-success" onclick="filterByStatus('available', this)">Available</button>
+                <button type="button" class="btn btn-outline-danger" onclick="filterByStatus('occupied', this)">Occupied</button>
+                <button type="button" class="btn btn-outline-warning" onclick="filterByStatus('cleaning', this)">Cleaning</button>
+                <button type="button" class="btn btn-outline-primary" onclick="filterByStatus('reserved', this)">Reserved</button>
+            </div>
         </div>
     </div>
     <div class="nexus-card-body">
@@ -477,6 +491,43 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
 
     function showTransferForm(assignmentId) {
         document.getElementById('transferFormContainer').classList.remove('d-none');
+    }
+
+    let currentStatusFilter = 'all';
+
+    function filterByStatus(status, btn) {
+        currentStatusFilter = status;
+        document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyBedFilters();
+    }
+
+    function filterBedGrid() {
+        applyBedFilters();
+    }
+
+    function applyBedFilters() {
+        const term = (document.getElementById('bedSearchInput')?.value || '').toLowerCase().trim();
+        const cards = document.querySelectorAll('.bed-card');
+        let visibleCount = 0;
+        
+        cards.forEach(card => {
+            const matchesStatus = (currentStatusFilter === 'all' || card.classList.contains('status-' + currentStatusFilter));
+            const text = card.textContent.toLowerCase();
+            const matchesSearch = (!term || text.includes(term));
+            
+            if (matchesStatus && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        const counterEl = document.getElementById('visibleBedCount');
+        if (counterEl) {
+            counterEl.textContent = `${visibleCount} Beds Shown`;
+        }
     }
 </script>
 
