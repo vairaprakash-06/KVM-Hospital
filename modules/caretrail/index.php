@@ -80,7 +80,7 @@ if (!empty($_GET['event_type'])) {
 
 $timeline = $patient ? $careTrail->getPatientTimeline($patientId, $filters) : [];
 $distinctTypes = $patient ? $careTrail->getDistinctEventTypes($patientId) : [];
-$departments = $db->query("SELECT id, name FROM `departments` ORDER BY name ASC")->fetchAll();
+$departments = $db->query("SELECT id, name FROM `departments` WHERE `status` = 'active' ORDER BY name ASC")->fetchAll();
 
 $pageTitle = 'CareTrail — Unified Patient Journey Timeline';
 require_once __DIR__ . '/../../app/views/layouts/header.php';

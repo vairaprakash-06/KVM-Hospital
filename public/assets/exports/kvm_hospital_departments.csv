@@ -1,0 +1,90 @@
+ID,"Department Code","Department Name",Category,Description,"Hospital Location","Telephone Extension",Status
+1,EMERG,"Emergency Department",Critical,"24/7 Acute trauma, resuscitation, and critical emergency response","Ground Floor, Wing A",101,ACTIVE
+2,OPD,"Outpatient Department",Clinical,"General consultations, follow-ups, and ambulatory patient care","Ground Floor, Wing B",102,ACTIVE
+3,IPD,"Inpatient Department",Clinical,"Wards, acute medical/surgical monitoring, and post-op care","Floors 2 & 3",103,ACTIVE
+4,GENMED,"General Medicine",Clinical,"Internal medicine, adult illnesses, lifestyle diseases, and checkups","First Floor, Suite 101",104,ACTIVE
+5,SURG,"General Surgery",Surgical,"Elective and emergency surgical procedures and perioperative care","Floor 2, Surgical Wing",105,ACTIVE
+6,PED,Pediatrics,Clinical,"Comprehensive neonatal, child, and adolescent healthcare","First Floor, Wing C",106,ACTIVE
+7,OBGYN,"Gynecology and Obstetrics",Clinical,"Maternal health, delivery suites, and gynecological surgeries","Floor 3, Maternity Wing",107,ACTIVE
+8,ORTHO,Orthopedics,Surgical,"Musculoskeletal disorders, bone fractures, and joint replacement","First Floor, Suite 108",108,ACTIVE
+9,CARD,Cardiology,Clinical,"Cardiac care, ECG, echocardiography, and hypertension management","First Floor, Heart Center",109,ACTIVE
+10,NEURO,Neurology,Clinical,"Neurological disorders, stroke intervention, and brain health","Floor 2, Neuro Suite",110,ACTIVE
+11,DERM,Dermatology,Clinical,"Skin conditions, allergy screenings, and dermatological care","Ground Floor, Suite 111",111,ACTIVE
+12,OPHTH,Ophthalmology,Clinical,"Vision testing, cataract evaluation, and eye health","Ground Floor, Suite 112",112,ACTIVE
+13,RAD,Radiology,Diagnostic,"X-Ray, CT Scan, Ultrasound, and diagnostic medical imaging","Basement 1, Diagnostic Hub",113,ACTIVE
+14,LAB,Laboratory,Diagnostic,"Automated hematology, biochemistry, and pathology testing","Basement 1, Core Lab",114,ACTIVE
+15,PHARM,Pharmacy,Support,"Inpatient and outpatient prescription dispensing and inventory","Ground Floor, Main Atrium",115,ACTIVE
+16,NEUROSURG,Neurosurgery,Surgical,"Complex cranial microsurgery, spinal cord decompression, and brain tumor resection","Floor 4, Surgical Tower",116,ACTIVE
+17,CTVS,"Cardiothoracic and Vascular Surgery",Surgical,"Coronary artery bypass grafting, heart valve replacement, and thoracic aortic surgery","Floor 4, Cardiac Wing",117,ACTIVE
+18,PEDSURG,"Pediatric Surgery",Surgical,"Congenital anomaly repair, pediatric trauma surgery, and pediatric laparoscopy","Floor 3, Pediatric Wing",118,ACTIVE
+19,PLASTSURG,"Plastic & Reconstructive Surgery",Surgical,"Microvascular tissue transfer, burn reconstruction, craniofacial repair, and aesthetics","Floor 3, Cosmetic Suite",119,ACTIVE
+20,URO,Urology,Surgical,"Endourology, laser stone lithotripsy, robotic prostatectomy, and male fertility care","Floor 2, Urology Wing",120,ACTIVE
+21,SURGONC,"Surgical Oncology",Surgical,"Comprehensive surgical excision of malignant tumors, staging laparotomy, and reconstruction","Floor 4, Oncology Center",121,ACTIVE
+22,GI_SURG,"Surgical Gastroenterology",Surgical,"Hepato-pancreato-biliary surgeries, colorectal resections, and bariatric operations","Floor 2, Surgical Wing",122,ACTIVE
+23,ENT,"Otorhinolaryngology (ENT)",Surgical,"Ear microsurgery, endoscopic sinus and skull base surgery, and laryngeal intervention","Ground Floor, Suite 123",123,ACTIVE
+24,MAXILLO,"Oral and Maxillofacial Surgery",Surgical,"Facial trauma reconstruction, orthognathic jaw correction, and temporomandibular care","Ground Floor, Dental Suite",124,ACTIVE
+25,VASCULAR,"Vascular Surgery",Surgical,"Peripheral bypass grafting, endovascular aneurysm repair, and varicose vein ablations","Floor 2, Vascular Lab",125,ACTIVE
+26,BARIATRIC,"Bariatric & Metabolic Surgery",Surgical,"Laparoscopic sleeve gastrectomy, Roux-en-Y bypass, and multidisciplinary obesity care","Floor 3, Metabolic Suite",126,ACTIVE
+27,TRANSPLANT,"Organ Transplant Surgery",Surgical,"Live-related and cadaveric renal and hepatic transplantation with immunosuppressive care","Floor 4, Transplant ICU",127,ACTIVE
+28,PODIATRY,"Podiatric Surgery & Diabetic Foot",Surgical,"Diabetic limb salvage, transmetatarsal reconstruction, and chronic wound debridement","First Floor, Suite 128",128,ACTIVE
+29,NEPHRO,Nephrology,Clinical,"Acute kidney injury, chronic kidney disease, hemodialysis protocols, and hypertension","Floor 3, Renal Center",129,ACTIVE
+30,GASTRO,"Gastroenterology & Hepatology",Clinical,"Diagnostic and therapeutic endoscopy, colonoscopy, ERCP, and cirrhosis management","Floor 2, Digestive Center",130,ACTIVE
+31,PULM,"Pulmonology & Respiratory Medicine",Clinical,"COPD, severe bronchial asthma, interventional bronchoscopy, and sleep-disordered breathing","First Floor, Suite 131",131,ACTIVE
+32,ENDO,"Endocrinology & Diabetology",Clinical,"Comprehensive diabetes titration, thyroid nodule evaluation, and metabolic endocrine care","First Floor, Suite 132",132,ACTIVE
+33,MEDONC,"Medical Oncology",Clinical,"Systemic cancer chemotherapy, targeted molecular therapy, and personalized immunotherapy","Floor 4, Cancer Center",133,ACTIVE
+34,HEMATO,"Clinical Hematology",Clinical,"Leukemia, lymphoma, multiple myeloma, thalassemia, and coagulation disorder management","Floor 4, Hematology Unit",134,ACTIVE
+35,RHEUM,Rheumatology,Clinical,"Autoimmune connective tissue disorders, rheumatoid arthritis, lupus, and biologic therapy","First Floor, Suite 135",135,ACTIVE
+36,INFECT,"Infectious Diseases",Clinical,"Complex tropical infections, multi-drug resistant pathogens, and antimicrobial stewardship","Ground Floor, Wing D",136,ACTIVE
+37,PSYCH,"Psychiatry & Behavioral Health",Clinical,"Clinical depression, bipolar disorder, adult psychosis, and psychiatric crisis intervention","Floor 2, Behavioral Suite",137,ACTIVE
+38,GERIATRIC,"Geriatric Medicine",Clinical,"Comprehensive geriatric functional assessment, polypharmacy review, and dementia care","First Floor, Suite 138",138,ACTIVE
+39,ALLERGY,"Allergy & Clinical Immunology",Clinical,"Skin prick allergy testing, food and drug challenges, and immunodeficiency evaluations","First Floor, Suite 139",139,ACTIVE
+40,PALLIATIVE,"Palliative Care & Pain Medicine",Clinical,"Multimodal chronic cancer pain control, symptom palliation, and holistic family support","Floor 3, Care Suite",140,ACTIVE
+41,SLEEP,"Sleep Medicine",Clinical,"Diagnostic overnight polysomnography, continuous positive airway pressure titration","Basement 1, Sleep Lab",141,ACTIVE
+42,GENETICS,"Medical Genetics & Genomics",Clinical,"Pediatric and adult genetic counseling, hereditary cancer syndromes, and karyotyping","First Floor, Suite 142",142,ACTIVE
+43,TOXIC,"Clinical Toxicology",Clinical,"Acute poisoning decontamination, organophosphate antidote administration, and envenomation","Ground Floor, Emergency Wing",143,ACTIVE
+44,ADDICTION,"Addiction Medicine & De-Addiction",Clinical,"Medically supervised detoxification, addiction psychiatry, and relapse prevention counseling","Floor 2, De-Addiction Center",144,ACTIVE
+45,NICU,"Neonatal Intensive Care",Critical,"Level III advanced premature neonatal ventilation, surfactant therapy, and total parenteral nutrition","Floor 3, Maternity Wing",145,ACTIVE
+46,PICU,"Pediatric Intensive Care",Critical,"Pediatric severe sepsis resuscitation, neurotrauma monitoring, and multi-organ life support","Floor 3, Pediatric Tower",146,ACTIVE
+47,PED_CARD,"Pediatric Cardiology",Clinical,"Congenital heart disease echocardiography, fetal cardiac scans, and pediatric arrhythmias","First Floor, Heart Center",147,ACTIVE
+48,PED_NEURO,"Pediatric Neurology",Clinical,"Refractory childhood seizures, cerebral palsy rehabilitation, and neurometabolic screening","First Floor, Wing C",148,ACTIVE
+49,MAT_FETAL,"Maternal-Fetal Medicine",Clinical,"Targeted fetal anomaly ultrasound, amniocentesis, and high-risk pregnancy co-management","Floor 3, Fetal Medicine",149,ACTIVE
+50,FERTILITY,"Reproductive Medicine & IVF",Clinical,"Advanced in-vitro fertilization, intracytoplasmic sperm injection, and reproductive endocrinology","Floor 3, Fertility Center",150,ACTIVE
+51,ANESTH,"Anesthesiology & Perioperative Care",Support,"Comprehensive pre-operative anesthetic optimization, neuroaxial blocks, and PACU monitoring","Floor 2, OT Complex",151,ACTIVE
+52,MICU,"Medical Intensive Care Unit",Critical,"Adult ARDS mechanical ventilation, invasive hemodynamic monitoring, and septic shock protocols","Floor 2, Critical Tower",152,ACTIVE
+53,SICU,"Surgical Intensive Care Unit",Critical,"Post-major surgical invasive hemodynamic stabilization and continuous cardiac index monitoring","Floor 2, Critical Tower",153,ACTIVE
+54,CCU,"Coronary Care Unit",Critical,"Acute myocardial infarction thrombolysis, intra-aortic balloon counterpulsation, and telemetry","First Floor, Heart Center",154,ACTIVE
+55,NEURO_ICU,"Neuro Intensive Care Unit",Critical,"Continuous intracranial pressure surveillance, post-thrombectomy neuro-monitoring, and sedation","Floor 2, Neuro Wing",155,ACTIVE
+56,TRAUMA_ICU,"Trauma Intensive Care Unit",Critical,"Massive transfusion protocol activation, rapid damage control monitoring, and spine precautions","Ground Floor, Trauma Wing",156,ACTIVE
+57,HISTOPATH,"Histopathology & Cytology",Diagnostic,"Surgical specimen biopsy examination, frozen section analysis, and immunohistochemical staining","Basement 1, Core Lab",157,ACTIVE
+58,MICROBIO,"Microbiology & Serology",Diagnostic,"Aerobic/anaerobic blood cultures, automated antimicrobial sensitivity, and fungal smears","Basement 1, Core Lab",158,ACTIVE
+59,BIOCHEM,"Clinical Biochemistry",Diagnostic,"Automated high-throughput serum chemistry, cardiac troponin, and therapeutic drug monitoring","Basement 1, Core Lab",159,ACTIVE
+60,BLOODBANK,"Transfusion Medicine & Blood Bank",Diagnostic,"Fractionation into PRBC, platelets, and FFP, apheresis donations, and cross-match verification","Ground Floor, Wing A",160,ACTIVE
+61,MOL_PATH,"Molecular Pathology & RT-PCR",Diagnostic,"Quantitative real-time PCR for viral loads, somatic cancer gene sequencing, and infectious DNA","Basement 1, Molecular Lab",161,ACTIVE
+62,NUCL_MED,"Nuclear Medicine & PET-CT",Diagnostic,"Whole-body oncologic PET-CT imaging, radioiodine thyroid therapy, and myocardial perfusion SPECT","Basement 2, Imaging Hub",162,ACTIVE
+63,INT_RAD,"Interventional Radiology",Diagnostic,"Minimally invasive catheter embolization, radiofrequency tumor ablation, and peripheral stenting","Basement 1, Cath Lab",163,ACTIVE
+64,NEURO_DIAG,"Neurophysiology Diagnostics",Diagnostic,"Routine/video electroencephalography (EEG), electromyography (EMG), and nerve conduction studies","Floor 2, Neuro Suite",164,ACTIVE
+65,CARD_DIAG,"Non-Invasive Cardiac Diagnostics",Diagnostic,"12-lead ECG, 2D speckle tracking echocardiography, treadmill stress test, and 24-hr Holter","First Floor, Heart Center",165,ACTIVE
+66,PULM_DIAG,"Pulmonary Diagnostics & Spirometry",Diagnostic,"Body plethysmography, diffusion capacity (DLCO), fractional exhaled nitric oxide (FeNO), and 6MWT","First Floor, Suite 166",166,ACTIVE
+67,PHYSIO,"Physical Therapy & Rehabilitation",Support,"Post-arthroplasty physical reconditioning, stroke motor retraining, and cardiopulmonary rehab","Ground Floor, Rehab Wing",167,ACTIVE
+68,OCCUP_THR,"Occupational Therapy",Support,"Activities of daily living adaptation, pediatric sensory integration, and upper extremity splinting","Ground Floor, Rehab Wing",168,ACTIVE
+69,SPEECH_THR,"Speech & Swallowing Therapy",Support,"Fiberoptic endoscopic evaluation of swallowing (FEES), aphasia recovery, and fluency therapy","Ground Floor, Suite 169",169,ACTIVE
+70,DIETETICS,"Clinical Nutrition & Dietetics",Support,"Total parenteral feeding formulation, renal diabetic menu planning, and medical nutritional therapy","First Floor, Suite 170",170,ACTIVE
+71,RAD_ONC,"Radiation Oncology",Clinical,"Image-guided radiation therapy (IGRT), intensity-modulated radiation (IMRT), and brachytherapy","Basement 2, Bunker 1",171,ACTIVE
+72,HYPERBARIC,"Hyperbaric Oxygen Therapy",Clinical,"Multiplace hyperbaric chamber oxygen therapy for chronic non-healing diabetic foot wounds and radiation necrosis","Basement 1, Hyperbaric Suite",172,ACTIVE
+73,HEMODIAL,"Daycare Hemodialysis Unit",Clinical,"High-flux bicarbonate outpatient hemodialysis stations and vascular access surveillance","Floor 3, Dialysis Wing",173,ACTIVE
+74,DAY_SURG,"Ambulatory Day Surgery Unit",Surgical,"Short-stay same-day surgical preparation, minimal access procedures, and same-day recovery discharge","Floor 2, Day Surgery",174,ACTIVE
+75,DENTAL,"Dental & Prosthodontics",Clinical,"Endodontics, maxillofacial prosthetics, periodontal therapy, and digital orthopantomography","Ground Floor, Suite 175",175,ACTIVE
+76,AUDIOLOGY,"Audiology & Hearing Sciences",Diagnostic,"Pure tone audiometry, brainstem evoked response audiometry (BERA), and digital hearing aid programming","Ground Floor, Suite 176",176,ACTIVE
+77,OPTOMETRY,"Optometry & Low Vision Care",Diagnostic,"Automated computer refraction, corneal topography, visual fields, and contact lens fitting","Ground Floor, Suite 177",177,ACTIVE
+78,MED_ADMIN,"Medical Administration & Quality",Support,"NABH accreditation compliance, medical credentialing, clinical audit oversight, and hospital SOPs","Floor 5, Administrative Block",178,ACTIVE
+79,NURS_ADM,"Nursing Administration & Services",Support,"Nursing staff deployment rosters, nurse-patient ratio management, and clinical bedside training","Floor 5, Nursing Directorate",179,ACTIVE
+80,MED_RECS,"Medical Records & Health Informatics",Support,"ICD-10 clinical coding, physical chart archiving, electronic health record auditing, and medicolegal records","Basement 1, Records Wing",180,ACTIVE
+81,INFECT_CTL,"Hospital Infection Prevention & Control",Support,"Healthcare-associated infection surveillance, environmental bioculture audits, and biohazard isolation protocol","Floor 5, Quality Cell",181,ACTIVE
+82,BIOMED,"Biomedical Engineering",Support,"Medical device calibration, preventive equipment maintenance, breakdown repair, and electrical safety testing","Basement 2, Engineering Hub",182,ACTIVE
+83,CSSD,"Central Sterile Services Department",Support,"Surgical instrument ultrasonic washing, ethylene oxide and high-pressure steam autoclaving of OT packs","Basement 1, CSSD Core",183,ACTIVE
+84,PAT_SERV,"Patient Experience & Public Relations",Support,"Central admission facilitation, patient grievance redressal, multilingual navigation, and concierge helpdesks","Ground Floor, Main Lobby",184,ACTIVE
+85,MED_SOCIAL,"Medical Social Work & Charity",Support,"Low-income government health scheme enrollment, indigent patient financial grants, and NGO rehabilitation links","Ground Floor, Wing B",185,ACTIVE
+86,BILL_ACCTS,"Hospital Billing & Patient Accounts",Support,"Cashless insurance TPA pre-authorization, inpatient charge auditing, payment gateways, and discharge billing","Ground Floor, Billing Atrium",186,ACTIVE
+87,LEGAL_COMP,"Medicolegal & Statutory Compliance",Support,"Clinical informed consent compliance, statutory regulatory reporting, organ donor legal clearance, police liaison","Floor 5, Legal Office",187,ACTIVE
+88,HOSP_IT,"Health Informatics & IT Systems",Support,"Hospital ERP infrastructure, database replication, serverless deployment pipelines, and cybersecurity defense","Floor 5, IT Datacenter",188,ACTIVE
+89,FACILITIES,"Facilities, Safety & Disaster Management",Support,"Medical gas pipeline system monitoring, fire safety automation, HVAC HEPA filtration, and code blue protocols","Basement 2, Plant Room",189,ACTIVE

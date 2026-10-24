@@ -126,7 +126,7 @@ if ($db !== null) {
             KVM Hospital Management System
         </h1>
         <p class="lead text-light opacity-75 mx-auto mb-4" style="max-width: 760px;">
-            A centralized healthcare operations platform connecting 15 hospital departments through one common authentication system and 5 differentiated clinical intelligence engines.
+            A centralized healthcare operations platform connecting 89 hospital departments through one common authentication system and 5 differentiated clinical intelligence engines.
         </p>
 
         <div class="d-flex justify-content-center gap-3 mb-5">

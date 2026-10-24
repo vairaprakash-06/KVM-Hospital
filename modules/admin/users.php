@@ -176,7 +176,7 @@ $users = $db->query("
 ")->fetchAll();
 
 $roles = $db->query("SELECT * FROM `roles` ORDER BY id ASC")->fetchAll();
-$departments = $db->query("SELECT id, name FROM `departments` ORDER BY name ASC")->fetchAll();
+$departments = $db->query("SELECT id, name FROM `departments` WHERE `status` = 'active' ORDER BY name ASC")->fetchAll();
 
 $pageTitle = 'Staff Accounts & Role-Based Access Control';
 require_once __DIR__ . '/../../app/views/layouts/header.php';

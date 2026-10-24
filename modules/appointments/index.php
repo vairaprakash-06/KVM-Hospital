@@ -168,6 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $filterDate = $_GET['date'] ?? '';
 $filterStatus = $_GET['status'] ?? '';
 $filterDoctor = !empty($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : null;
+$filterDept   = !empty($_GET['dept_id']) ? (int)$_GET['dept_id'] : null;
 
 // Patient filter (if coming from patient list or logged in as patient)
 $filterPatient = !empty($_GET['patient_id']) ? (int)$_GET['patient_id'] : null;
@@ -202,6 +203,10 @@ if ($filterDoctor) {
     $sql .= " AND a.doctor_id = :doc_id";
     $params['doc_id'] = $filterDoctor;
 }
+if ($filterDept) {
+    $sql .= " AND a.department_id = :dept_id";
+    $params['dept_id'] = $filterDept;
+}
 if ($filterDate) {
     $sql .= " AND a.appointment_date = :app_date";
     $params['app_date'] = $filterDate;
@@ -217,13 +222,14 @@ $stmt = $db->prepare($sql);
 $stmt->execute($params);
 $appointments = $stmt->fetchAll();
 
-// Lists for modal
+// Lists for modal & filters (only active departments)
 $patientsList = $db->query("SELECT id, patient_id, first_name, last_name, phone FROM `patient_profiles` ORDER BY first_name ASC")->fetchAll();
+$activeDepartmentsList = $db->query("SELECT id, dept_code, name FROM `departments` WHERE `status` = 'active' ORDER BY name ASC")->fetchAll();
 $doctorsList = $db->query("
     SELECT d.id, d.first_name, d.last_name, dep.name AS dept_name, dep.id AS dept_id 
     FROM `doctor_profiles` d 
     JOIN `departments` dep ON d.department_id = dep.id 
-    WHERE d.availability_status != 'off_duty'
+    WHERE d.availability_status != 'off_duty' AND dep.status = 'active'
 ")->fetchAll();
 
 $pageTitle = 'Appointment Management & Booking';
@@ -247,12 +253,12 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
 <!-- Filters Bar -->
 <div class="nexus-card mb-4 p-3">
     <form method="GET" action="index.php" class="row g-2 align-items-center">
-        <div class="col-md-3">
-            <label class="form-label small text-secondary fw-semibold mb-1">Filter by Date</label>
+        <div class="col-md-2">
+            <label class="form-label small text-secondary fw-semibold mb-1">Filter Date</label>
             <input type="date" name="date" class="form-control" value="<?= e($filterDate) ?>" onchange="this.form.submit()">
         </div>
-        <div class="col-md-3">
-            <label class="form-label small text-secondary fw-semibold mb-1">Filter by Status</label>
+        <div class="col-md-2">
+            <label class="form-label small text-secondary fw-semibold mb-1">Status</label>
             <select name="status" class="form-select" onchange="this.form.submit()">
                 <option value="">All Statuses</option>
                 <option value="pending" <?= $filterStatus === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -263,7 +269,18 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
                 <option value="cancelled" <?= $filterStatus === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="form-label small text-secondary fw-semibold mb-1">Department</label>
+            <select name="dept_id" class="form-select" onchange="this.form.submit()">
+                <option value="">All Active Departments (<?= count($activeDepartmentsList) ?>)</option>
+                <?php foreach ($activeDepartmentsList as $ad): ?>
+                    <option value="<?= $ad['id'] ?>" <?= $filterDept === (int)$ad['id'] ? 'selected' : '' ?>>
+                        <?= e($ad['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="col-md-3">
             <label class="form-label small text-secondary fw-semibold mb-1">Live Search Table</label>
             <input type="text" class="form-control" placeholder="Search patient, doctor, or code..." data-table-search="appointmentsTable">
         </div>
