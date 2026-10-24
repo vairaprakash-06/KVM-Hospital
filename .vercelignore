@@ -1,0 +1,8 @@
+# Vercel Ignore Configuration
+# Prevent Vercel from treating root PHP files as downloadable static assets
+/*.php
+tests/
+docs/
+database/
+.env.example
+.git

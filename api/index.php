@@ -35,39 +35,39 @@ if (str_starts_with($uriPath, '/assets/')) {
     }
 }
 
-// 2. Public Root Entrypoints
-if ($uriPath === '/' || $uriPath === '/index.php') {
+// 2. Public Root Entrypoints (Clean URLs and .php)
+if ($uriPath === '/' || $uriPath === '/index' || $uriPath === '/index.php' || $uriPath === '/api' || $uriPath === '/api/') {
     $_SERVER['SCRIPT_NAME'] = '/index.php';
-    require __DIR__ . '/../public/index.php';
+    require __DIR__ . '/../views/index.php';
     exit;
 }
 
-if ($uriPath === '/login.php') {
+if ($uriPath === '/login' || $uriPath === '/login.php') {
     $_SERVER['SCRIPT_NAME'] = '/login.php';
-    require __DIR__ . '/../public/login.php';
+    require __DIR__ . '/../views/login.php';
     exit;
 }
 
-if ($uriPath === '/logout.php') {
+if ($uriPath === '/logout' || $uriPath === '/logout.php') {
     $_SERVER['SCRIPT_NAME'] = '/logout.php';
-    require __DIR__ . '/../public/logout.php';
+    require __DIR__ . '/../views/logout.php';
     exit;
 }
 
-if ($uriPath === '/register.php') {
+if ($uriPath === '/register' || $uriPath === '/register.php') {
     $_SERVER['SCRIPT_NAME'] = '/register.php';
-    require __DIR__ . '/../public/register.php';
+    require __DIR__ . '/../views/register.php';
     exit;
 }
 
-if ($uriPath === '/unauthorized.php') {
+if ($uriPath === '/unauthorized' || $uriPath === '/unauthorized.php') {
     $_SERVER['SCRIPT_NAME'] = '/unauthorized.php';
-    require __DIR__ . '/../public/unauthorized.php';
+    require __DIR__ . '/../views/unauthorized.php';
     exit;
 }
 
 // 3. API Endpoints
-if (str_starts_with($uriPath, '/api/queue.php')) {
+if (str_starts_with($uriPath, '/api/queue')) {
     $_SERVER['SCRIPT_NAME'] = '/api/queue.php';
     require __DIR__ . '/queue.php';
     exit;

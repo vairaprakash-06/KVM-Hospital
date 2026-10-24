@@ -15,19 +15,36 @@ if (is_logged_in()) {
     redirect(get_dashboard_route_for_role($primaryRole));
 }
 
-// Fetch real database metrics
-$db = get_db();
-$patientCount = (int)$db->query("SELECT COUNT(*) FROM `patient_profiles`")->fetchColumn();
-$doctorCount  = (int)$db->query("SELECT COUNT(*) FROM `doctor_profiles`")->fetchColumn();
-$deptCount    = (int)$db->query("SELECT COUNT(*) FROM `departments` WHERE status = 'active'")->fetchColumn();
-$bedStats     = $db->query("
-    SELECT 
-        COUNT(*) AS total,
-        SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) AS available,
-        SUM(CASE WHEN status = 'occupied' THEN 1 ELSE 0 END) AS occupied
-    FROM `beds`
-")->fetch();
-$activeAlerts = (int)$db->query("SELECT COUNT(*) FROM `flowlens_alerts` WHERE status = 'active'")->fetchColumn();
+// Fetch database metrics (or fallback safely if cloud database is not connected yet)
+$db = get_db_or_null();
+$isDbConnected = false;
+$patientCount = 248;
+$doctorCount  = 18;
+$deptCount    = 15;
+$bedStats     = ['total' => 60, 'available' => 42, 'occupied' => 18];
+$activeAlerts = 2;
+
+if ($db !== null) {
+    try {
+        $patientCount = (int)$db->query("SELECT COUNT(*) FROM `patient_profiles`")->fetchColumn();
+        $doctorCount  = (int)$db->query("SELECT COUNT(*) FROM `doctor_profiles`")->fetchColumn();
+        $deptCount    = (int)$db->query("SELECT COUNT(*) FROM `departments` WHERE status = 'active'")->fetchColumn();
+        $fetchedBedStats = $db->query("
+            SELECT 
+                COUNT(*) AS total,
+                SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) AS available,
+                SUM(CASE WHEN status = 'occupied' THEN 1 ELSE 0 END) AS occupied
+            FROM `beds`
+        ")->fetch();
+        if ($fetchedBedStats) {
+            $bedStats = $fetchedBedStats;
+        }
+        $activeAlerts = (int)$db->query("SELECT COUNT(*) FROM `flowlens_alerts` WHERE status = 'active'")->fetchColumn();
+        $isDbConnected = true;
+    } catch (Throwable $e) {
+        error_log("Landing page DB query error: " . $e->getMessage());
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -99,6 +116,11 @@ $activeAlerts = (int)$db->query("SELECT COUNT(*) FROM `flowlens_alerts` WHERE st
         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.3);">
             <i class="bi bi-database-check text-info"></i>
             <span class="text-light small fw-semibold">Centralized Relational MySQL Schema (kvm_hospital)</span>
+            <?php if (!$isDbConnected): ?>
+                <span class="badge bg-warning text-dark ms-1" style="font-size: 0.65rem;" title="MySQL connection pending. Connect MySQL via Vercel Environment Variables.">Demo Preview</span>
+            <?php else: ?>
+                <span class="badge bg-success ms-1" style="font-size: 0.65rem;">Live DB Connected</span>
+            <?php endif; ?>
         </div>
         <h1 class="display-5 fw-bold text-white mb-3">
             KVM Hospital Management System

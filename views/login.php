@@ -12,9 +12,13 @@ require_once __DIR__ . '/../app/helpers/functions.php';
 require_once __DIR__ . '/../app/middleware/csrf.php';
 require_once __DIR__ . '/../app/services/AuditService.php';
 
-$db = get_db();
-$auditService = new AuditService($db);
+$db = get_db_or_null();
+$auditService = $db !== null ? new AuditService($db) : null;
 $errorMessage = '';
+
+if ($db === null) {
+    $errorMessage = 'Notice: Centralized MySQL database is currently disconnected. In your Vercel Project Settings, add DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD environment variables to enable authentication.';
+}
 
 // If already logged in, redirect to respective dashboard
 if (is_logged_in()) {
@@ -24,7 +28,10 @@ if (is_logged_in()) {
 
 // Process POST Login Request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    verify_csrf();
+    if ($db === null) {
+        $errorMessage = "Cannot authenticate: Database connection is required. Please add MySQL credentials in your Vercel Project Settings > Environment Variables.";
+    } else {
+        verify_csrf();
 
     $identifier = trim($_POST['identifier'] ?? '');
     $password = (string)($_POST['password'] ?? '');
@@ -159,6 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errorMessage = "Invalid credentials. Please verify your username/email and password.";
         }
     }
+}
 }
 ?>
 <!DOCTYPE html>
