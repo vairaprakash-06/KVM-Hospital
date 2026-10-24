@@ -13,14 +13,21 @@ require_once __DIR__ . '/../app/middleware/csrf.php';
 require_once __DIR__ . '/../app/services/AuditService.php';
 require_once __DIR__ . '/../app/services/CareTrailService.php';
 
-$db = get_db();
-$audit = new AuditService($db);
-$careTrail = new CareTrailService($db);
+$db = get_db_or_null();
+$audit = $db !== null ? new AuditService($db) : null;
+$careTrail = $db !== null ? new CareTrailService($db) : null;
 $error = '';
 $success = '';
 
+if ($db === null) {
+    $error = 'Notice: Centralized MySQL database is currently disconnected. In your Vercel Project Settings, add DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD environment variables to register live accounts.';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    verify_csrf();
+    if ($db === null) {
+        $error = "Registration requires an active MySQL connection. Please add database credentials in Vercel.";
+    } else {
+        verify_csrf();
 
     $firstName = sanitize_input($_POST['first_name'] ?? '');
     $lastName  = sanitize_input($_POST['last_name'] ?? '');
@@ -123,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+}
 }
 ?>
 <!DOCTYPE html>
