@@ -130,9 +130,16 @@ foreach ($indexesToCreate as $idxSql) {
 
 echo "2. Importing seed.sql dataset...\n";
 
-$pdo->sqliteCreateFunction('NOW', fn() => date('Y-m-d H:i:s'));
-$pdo->sqliteCreateFunction('CURDATE', fn() => date('Y-m-d'));
-$pdo->sqliteCreateFunction('CURTIME', fn() => date('H:i:s'));
+$fnRegistrar = function($pdo, $name, $cb) {
+    if (method_exists($pdo, 'createFunction')) {
+        @$pdo->createFunction($name, $cb);
+    } else {
+        @$pdo->sqliteCreateFunction($name, $cb);
+    }
+};
+$fnRegistrar($pdo, 'NOW', fn() => date('Y-m-d H:i:s'));
+$fnRegistrar($pdo, 'CURDATE', fn() => date('Y-m-d'));
+$fnRegistrar($pdo, 'CURTIME', fn() => date('H:i:s'));
 
 $cleanSeed = preg_replace('/--.*$/m', '', $seedSql);
 $cleanSeed = preg_replace('/CREATE\s+DATABASE[^;]+;/i', '', $cleanSeed);

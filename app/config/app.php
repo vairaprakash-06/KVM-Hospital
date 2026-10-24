@@ -7,13 +7,15 @@
 declare(strict_types=1);
 
 // Error reporting settings
-$appEnv = getenv('APP_ENV') ?: 'development';
+$isVercel = !empty($_ENV['VERCEL']) || !empty(getenv('VERCEL')) || !empty($_ENV['NOW_REGION']) || !empty(getenv('NOW_REGION'));
+$appEnv = getenv('APP_ENV') ?: ($isVercel ? 'production' : 'development');
 if ($appEnv === 'development') {
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
-    error_reporting(E_ALL);
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 } else {
     ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
     error_reporting(0);
 }
 

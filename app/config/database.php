@@ -58,6 +58,17 @@ class NexusSqlitePDO extends PDO {
     public function exec(string $statement): int|false {
         return parent::exec($this->rewriteSql($statement));
     }
+
+    /**
+     * Compatible custom SQLite function registrar supporting PHP 8.0 through PHP 8.5+
+     */
+    public function registerCustomFunction(string $name, callable $callback, int $numArgs = -1): void {
+        if (method_exists($this, 'createFunction')) {
+            @$this->createFunction($name, $callback, $numArgs);
+        } else {
+            @$this->sqliteCreateFunction($name, $callback, $numArgs);
+        }
+    }
 }
 
 class Database {
@@ -203,14 +214,14 @@ class Database {
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-                // Register MySQL compatibility functions inside SQLite
-                $pdo->sqliteCreateFunction('NOW', fn() => date('Y-m-d H:i:s'));
-                $pdo->sqliteCreateFunction('CURDATE', fn() => date('Y-m-d'));
-                $pdo->sqliteCreateFunction('CURTIME', fn() => date('H:i:s'));
-                $pdo->sqliteCreateFunction('VERSION', fn() => '8.0.35-NexusCare-SQLite');
-                $pdo->sqliteCreateFunction('CONCAT', fn(...$p) => implode('', $p));
-                $pdo->sqliteCreateFunction('IFNULL', fn($a, $b) => $a !== null ? $a : $b);
-                $pdo->sqliteCreateFunction('TIMESTAMPDIFF', function($unit, $d1, $d2) {
+                // Register MySQL compatibility functions inside SQLite (PHP 8.0 - 8.5+ compatible)
+                $pdo->registerCustomFunction('NOW', fn() => date('Y-m-d H:i:s'));
+                $pdo->registerCustomFunction('CURDATE', fn() => date('Y-m-d'));
+                $pdo->registerCustomFunction('CURTIME', fn() => date('H:i:s'));
+                $pdo->registerCustomFunction('VERSION', fn() => '8.0.35-NexusCare-SQLite');
+                $pdo->registerCustomFunction('CONCAT', fn(...$p) => implode('', $p));
+                $pdo->registerCustomFunction('IFNULL', fn($a, $b) => $a !== null ? $a : $b);
+                $pdo->registerCustomFunction('TIMESTAMPDIFF', function($unit, $d1, $d2) {
                     if (!$d1 || !$d2) return 0;
                     $t1 = strtotime((string)$d1);
                     $t2 = strtotime((string)$d2);
