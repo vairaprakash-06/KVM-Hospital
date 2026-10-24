@@ -305,4 +305,29 @@ if (file_exists($samplePatientsFile)) {
     }
 }
 
+echo "4. Ingesting 89 hospital departments master list from kvm_hospital_department_seed.sql...\n";
+$deptSeedFile = $baseDir . '/database/kvm_hospital_department_seed.sql';
+if (file_exists($deptSeedFile)) {
+    $deptSql = file_get_contents($deptSeedFile);
+    // Strip USE statement
+    $deptSql = preg_replace('/USE\s+`?[a-zA-Z0-9_]+`?\s*;/i', '', $deptSql);
+    // SQLite compatible syntax
+    $deptSql = preg_replace('/INSERT\s+IGNORE\s+INTO/i', 'INSERT OR IGNORE INTO', $deptSql);
+    $deptSql = preg_replace('/INSERT\s+INTO\s+`departments`/i', 'INSERT OR IGNORE INTO `departments`', $deptSql);
+
+    $deptStatements = splitSqlStatements($deptSql);
+    foreach ($deptStatements as $stmt) {
+        $trimmed = trim($stmt);
+        if (empty($trimmed)) continue;
+        try {
+            $pdo->exec($trimmed);
+        } catch (Exception $e) {
+            echo "Department seed notice: " . $e->getMessage() . "\n";
+        }
+    }
+    $totalDeptsInSqlite = (int)$pdo->query("SELECT COUNT(*) FROM `departments`")->fetchColumn();
+    echo "Successfully verified {$totalDeptsInSqlite} hospital departments in SQLite database.\n";
+}
+
 echo "Successfully generated {$sqliteFile} (" . filesize($sqliteFile) . " bytes) with {$importedCount} statements.\n";
+
