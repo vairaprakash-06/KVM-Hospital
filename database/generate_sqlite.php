@@ -182,4 +182,127 @@ foreach ($seedStatements as $stmt) {
     }
 }
 
+echo "3. Ingesting 240 Tamil sample patients dataset...\n";
+$samplePatientsFile = $baseDir . '/database/kvm_hospital_240_tamil_sample_patients.sql';
+if (file_exists($samplePatientsFile)) {
+    $sampleSql = file_get_contents($samplePatientsFile);
+    $pattern = "/\(\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*([0-9]+)\s*,\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*'([^']+)'\s*\)/";
+    if (preg_match_all($pattern, $sampleSql, $matches, PREG_SET_ORDER)) {
+        $existing = [];
+        foreach ($pdo->query("SELECT id, patient_id FROM patient_profiles") as $r) {
+            $existing[$r['patient_id']] = (int)$r['id'];
+        }
+
+        $cities = [
+            'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem',
+            'Tirunelveli', 'Tiruppur', 'Erode', 'Vellore', 'Thanjavur',
+            'Dindigul', 'Kanchipuram', 'Nagercoil', 'Cuddalore', 'Kumbakonam'
+        ];
+        $bloodGroups = ['O+', 'A+', 'B+', 'AB+', 'O-', 'A-', 'B-'];
+
+        $insertStmt = $pdo->prepare("
+            INSERT INTO `patient_profiles` (
+                `patient_id`, `first_name`, `last_name`, `dob`, `gender`,
+                `blood_group`, `phone`, `email`, `address`, `emergency_contact_name`,
+                `emergency_contact_phone`, `allergies`, `medical_history`, `created_at`
+            ) VALUES (
+                :pid, :fn, :ln, :dob, :gender,
+                :bg, :phone, :email, :addr, :em_name,
+                :em_phone, :allergies, :history, :created_at
+            )
+        ");
+
+        $updateStmt = $pdo->prepare("
+            UPDATE `patient_profiles` SET
+                `first_name` = :fn,
+                `last_name` = :ln,
+                `dob` = :dob,
+                `gender` = :gender,
+                `blood_group` = :bg,
+                `phone` = :phone,
+                `email` = :email,
+                `address` = :addr,
+                `emergency_contact_name` = :em_name,
+                `emergency_contact_phone` = :em_phone,
+                `allergies` = :allergies,
+                `medical_history` = :history
+            WHERE `patient_id` = :pid
+        ");
+
+        foreach ($matches as $idx => $match) {
+            $code       = trim($match[1]);
+            $fullName   = trim($match[2]);
+            $age        = (int)$match[3];
+            $gender     = strtolower(trim($match[4]));
+            $phone      = trim($match[5]);
+            $careStatus = trim($match[6]);
+
+            $nameParts = preg_split('/\s+/', $fullName, 2);
+            $firstName = $nameParts[0];
+            $lastName  = $nameParts[1] ?? '';
+
+            $birthYear  = 2026 - $age;
+            $month      = sprintf('%02d', ($idx % 12) + 1);
+            $day        = sprintf('%02d', ($idx % 28) + 1);
+            $dob        = "{$birthYear}-{$month}-{$day}";
+
+            $bg         = $bloodGroups[$idx % count($bloodGroups)];
+            $city       = $cities[$idx % count($cities)];
+            $streetNum  = ($idx * 7 % 180) + 1;
+            $address    = "{$streetNum}, Main Road, {$city}, Tamil Nadu";
+            
+            $cleanFn    = strtolower(preg_replace('/[^a-z0-9]/i', '', $firstName));
+            $cleanLn    = strtolower(preg_replace('/[^a-z0-9]/i', '', $lastName));
+            $emailPrefix = $cleanLn !== '' ? "{$cleanFn}.{$cleanLn}" : $cleanFn;
+            $email      = "{$emailPrefix}" . ($idx + 1) . "@example.com";
+
+            $emName     = ($gender === 'female' ? 'Kavitha ' : 'Ramesh ') . ($lastName !== '' ? $lastName : 'Kumar');
+            $emPhone    = '+91 94440 ' . sprintf('%05d', ($idx + 100));
+
+            $allergies  = ($idx % 5 === 0) ? 'Dust allergy' : (($idx % 9 === 0) ? 'Penicillin' : 'None');
+            $history    = ($careStatus === 'Inpatient Admitted') 
+                            ? "Inpatient care. Medical condition monitored. Care status: {$careStatus}."
+                            : "Outpatient general clinical follow-up. Routine vital signs normal.";
+
+            $createdAt  = date('Y-m-d H:i:s', strtotime("-{$idx} hours"));
+
+            if (isset($existing[$code])) {
+                $updateStmt->execute([
+                    'pid'       => $code,
+                    'fn'        => $firstName,
+                    'ln'        => $lastName,
+                    'dob'       => $dob,
+                    'gender'    => $gender,
+                    'bg'        => $bg,
+                    'phone'     => $phone,
+                    'email'     => $email,
+                    'addr'      => $address,
+                    'em_name'   => $emName,
+                    'em_phone'  => $emPhone,
+                    'allergies' => $allergies,
+                    'history'   => $history
+                ]);
+            } else {
+                $insertStmt->execute([
+                    'pid'        => $code,
+                    'fn'         => $firstName,
+                    'ln'         => $lastName,
+                    'dob'        => $dob,
+                    'gender'     => $gender,
+                    'bg'         => $bg,
+                    'phone'      => $phone,
+                    'email'      => $email,
+                    'addr'       => $address,
+                    'em_name'    => $emName,
+                    'em_phone'   => $emPhone,
+                    'allergies'  => $allergies,
+                    'history'    => $history,
+                    'created_at' => $createdAt
+                ]);
+            }
+        }
+        echo "Successfully imported 240 Tamil sample patients.\n";
+    }
+}
+
 echo "Successfully generated {$sqliteFile} (" . filesize($sqliteFile) . " bytes) with {$importedCount} statements.\n";
