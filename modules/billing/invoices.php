@@ -483,8 +483,8 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
                 <!-- Populated via JS -->
             </div>
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i>Print Invoice
+                <button type="button" class="btn btn-primary btn-sm" onclick="printInvoiceDocument()">
+                    <i class="bi bi-printer me-1"></i>Print Invoice Alone
                 </button>
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
@@ -602,6 +602,129 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
         document.getElementById('invViewContent').innerHTML = html;
         const modal = new bootstrap.Modal(document.getElementById('viewInvoiceModal'));
         modal.show();
+    }
+
+    function printInvoiceDocument() {
+        const content = document.getElementById('invViewContent');
+        if (!content) {
+            window.print();
+            return;
+        }
+
+        const invNum = document.getElementById('invViewNumber')?.textContent || 'Invoice';
+
+        // Create an isolated hidden iframe for 100% clean, pure document printing
+        let printFrame = document.getElementById('invoicePrintFrame');
+        if (!printFrame) {
+            printFrame = document.createElement('iframe');
+            printFrame.id = 'invoicePrintFrame';
+            printFrame.style.position = 'fixed';
+            printFrame.style.right = '0';
+            printFrame.style.bottom = '0';
+            printFrame.style.width = '0';
+            printFrame.style.height = '0';
+            printFrame.style.border = '0';
+            document.body.appendChild(printFrame);
+        }
+
+        const doc = printFrame.contentDocument || printFrame.contentWindow.document;
+        doc.open();
+        doc.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clinical Bill — ${invNum}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm 12mm;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            background: #ffffff !important;
+            color: #111827 !important;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            padding: 0;
+            margin: 0;
+        }
+        .invoice-print-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        th, td {
+            border: 1px solid #d1d5db !important;
+            padding: 7px 10px !important;
+        }
+        .bg-light {
+            background-color: #f8fafc !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .badge {
+            border: 1px solid #94a3b8 !important;
+            color: #334155 !important;
+            background: transparent !important;
+            font-weight: 500;
+        }
+        .hospital-signature-footer {
+            border-top: 1px dashed #cbd5e1;
+            margin-top: 3rem;
+            padding-top: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 9pt;
+            color: #64748b;
+        }
+        .signature-box {
+            text-align: right;
+        }
+        .signature-line {
+            border-bottom: 1px solid #94a3b8;
+            width: 200px;
+            margin-left: auto;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-print-container">
+        ${content.innerHTML}
+        <div class="hospital-signature-footer">
+            <div>
+                <strong>KVM Hospital Management System — NexusCare</strong><br>
+                Computer-generated official clinical bill & receipt.<br>
+                Health Reg: KVM-HOSP-2026-MED &bull; Centralized DBMS Invoicing
+            </div>
+            <div class="signature-box">
+                <div class="signature-line"></div>
+                <span>Authorized Billing Officer / Cashier</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`);
+        doc.close();
+
+        setTimeout(() => {
+            try {
+                printFrame.contentWindow.focus();
+                printFrame.contentWindow.print();
+            } catch (err) {
+                window.print();
+            }
+        }, 300);
     }
 </script>
 

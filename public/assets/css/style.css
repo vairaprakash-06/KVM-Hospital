@@ -545,3 +545,121 @@ h1, h2, h3, h4, h5, h6, .brand-font {
     margin-left: 0;
   }
 }
+
+/* --------------------------------------------------------------------
+   Print Document Styles: Clean, Standalone Invoice & Receipt Printing
+   -------------------------------------------------------------------- */
+@media print {
+  /* Hide all dashboard application chrome, navigation, headers, footers, and modal chrome */
+  .sidebar,
+  .topbar,
+  footer,
+  .toast-container,
+  .alert,
+  .btn,
+  .btn-close,
+  .modal-backdrop,
+  .modal-header,
+  .modal-footer,
+  .card-header,
+  .nav-section-label,
+  #sidebarToggle,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset body and html layout */
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .app-wrapper,
+  .main-content,
+  .content-body {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* When an invoice modal is open during print, hide all other page contents */
+  body.modal-open .content-body > *:not(.modal),
+  body.modal-open .topbar,
+  body.modal-open .sidebar {
+    display: none !important;
+  }
+
+  .modal {
+    position: static !important;
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .modal-dialog {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    transform: none !important;
+  }
+
+  .modal-content {
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .modal-body {
+    padding: 0 !important;
+  }
+
+  /* Optimize print tables */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  th, td {
+    padding: 6px 10px !important;
+    border: 1px solid #d1d5db !important;
+    color: #111827 !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  .bg-light {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .badge {
+    border: 1px solid #9ca3af !important;
+    color: #111827 !important;
+    background: transparent !important;
+  }
+}
