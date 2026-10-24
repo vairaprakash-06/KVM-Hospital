@@ -44,10 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (queueMonitorContainer) {
         const doctorId = queueMonitorContainer.getAttribute('data-doctor-id') || '';
         const deptId = queueMonitorContainer.getAttribute('data-dept-id') || '';
+        const apiBase = queueMonitorContainer.getAttribute('data-api-url') || '../../api/queue.php';
 
         const pollQueue = async () => {
             try {
-                const res = await fetch(`../../api/queue.php?doctor_id=${doctorId}&department_id=${deptId}`);
+                const sep = apiBase.includes('?') ? '&' : '?';
+                const res = await fetch(`${apiBase}${sep}doctor_id=${encodeURIComponent(doctorId)}&department_id=${encodeURIComponent(deptId)}`);
                 if (!res.ok) return;
                 const data = await res.json();
                 if (data.success && data.html) {

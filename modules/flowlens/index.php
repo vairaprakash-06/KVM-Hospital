@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('success', "FlowLens analyzed operational records: All monitored parameters are currently within normal thresholds.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/flowlens/index.php');
     }
 
     // Action 2: Acknowledge Alert
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($flowLens->acknowledgeAlert($alertId, $currentUser['id'])) {
             set_flash('info', "Bottleneck alert acknowledged.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/flowlens/index.php');
     }
 
     // Action 3: Resolve Alert
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', "Resolution notes are required to document the corrective action.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/flowlens/index.php');
     }
 }
 

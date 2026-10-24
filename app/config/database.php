@@ -40,6 +40,9 @@ class NexusSqlitePDO extends PDO {
         // 6. Dynamic parameterized interval: NOW() - INTERVAL :mins MINUTE
         $sql = preg_replace('/NOW\(\)\s*-\s*INTERVAL\s+:mins\s+MINUTE/i', "datetime('now', '-' || :mins || ' minutes')", $sql);
 
+        // 7. GROUP_CONCAT with SEPARATOR (MySQL dialect to SQLite dialect: GROUP_CONCAT(expr, separator))
+        $sql = preg_replace('/GROUP_CONCAT\s*\(\s*(.*?)\s+SEPARATOR\s+([\'"][^\'"]*[\'"])\s*\)/is', 'GROUP_CONCAT($1, $2)', $sql);
+
         return $sql;
     }
 

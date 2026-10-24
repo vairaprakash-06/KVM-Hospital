@@ -9,6 +9,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/config/app.php';
 require_once __DIR__ . '/../app/config/database.php';
 require_once __DIR__ . '/../app/helpers/functions.php';
+require_once __DIR__ . '/../app/middleware/csrf.php';
 require_once __DIR__ . '/../app/services/QueueService.php';
 
 $doctorId = !empty($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : null;
@@ -74,7 +75,7 @@ ob_start();
                 <?php if (is_logged_in() && has_role('doctor', 'receptionist', 'nurse', 'hospital_admin', 'super_admin')): ?>
                     <div class="btn-group btn-group-sm">
                         <?php if ($q['status'] === 'waiting'): ?>
-                            <form method="POST" action="../../modules/queueflow/index.php" class="d-inline">
+                            <form method="POST" action="<?= BASE_URL ?>/modules/queueflow/index.php" class="d-inline">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="call_patient">
                                 <input type="hidden" name="queue_entry_id" value="<?= $q['id'] ?>">
@@ -84,7 +85,7 @@ ob_start();
                                 </button>
                             </form>
                         <?php elseif ($q['status'] === 'called'): ?>
-                            <form method="POST" action="../../modules/queueflow/index.php" class="d-inline">
+                            <form method="POST" action="<?= BASE_URL ?>/modules/queueflow/index.php" class="d-inline">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="start_consultation">
                                 <input type="hidden" name="queue_entry_id" value="<?= $q['id'] ?>">
@@ -94,7 +95,7 @@ ob_start();
                                 </button>
                             </form>
                         <?php elseif ($q['status'] === 'in_consultation'): ?>
-                            <form method="POST" action="../../modules/queueflow/index.php" class="d-inline">
+                            <form method="POST" action="<?= BASE_URL ?>/modules/queueflow/index.php" class="d-inline">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="complete_consultation">
                                 <input type="hidden" name="queue_entry_id" value="<?= $q['id'] ?>">
@@ -106,9 +107,8 @@ ob_start();
                         <?php endif; ?>
 
                         <button type="button" class="btn btn-outline-danger btn-sm" 
-                                data-bs-toggle="modal" data-bs-target="#priorityModal" 
-                                data-qid="<?= $q['id'] ?>" data-token="<?= $q['token_number'] ?>">
-                            <i class="bi bi-arrow-up-circle"></i>
+                                onclick="openPriorityModal(<?= $q['id'] ?>, <?= $q['token_number'] ?>, '<?= e($q['priority_level']) ?>')">
+                            <i class="bi bi-arrow-up-circle"></i> Priority
                         </button>
                     </div>
                 <?php endif; ?>

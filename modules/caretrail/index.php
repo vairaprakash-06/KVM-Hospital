@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         set_flash('success', "CareTrail clinical milestone recorded successfully.");
     }
-    redirect("index.php?patient_id={$patientId}");
+    redirect(BASE_URL . "/modules/caretrail/index.php?patient_id={$patientId}");
 }
 
 // Select active patient
@@ -263,11 +263,21 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="index.php">
+            <form method="POST" action="<?= BASE_URL ?>/modules/caretrail/index.php">
                 <?= csrf_field() ?>
-                <input type="hidden" name="patient_id" value="<?= $patientId ?>">
 
                 <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Target Patient *</label>
+                        <select name="patient_id" class="form-select" required>
+                            <?php foreach ($allPatients as $p): ?>
+                                <option value="<?= $p['id'] ?>" <?= ((int)$p['id'] === (int)$patientId) ? 'selected' : '' ?>>
+                                    <?= e($p['first_name'] . ' ' . $p['last_name']) ?> (<?= e($p['patient_id']) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Event Milestone Title *</label>
                         <input type="text" name="event_title" class="form-control" required placeholder="e.g. Cardiology Echocardiogram Assessment">

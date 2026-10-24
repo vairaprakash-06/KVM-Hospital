@@ -30,21 +30,49 @@ $entityFilter = !empty($_GET['entity_type']) ? $_GET['entity_type'] : null;
 $logs = $auditService->getRecentLogs(60, $actionFilter, $entityFilter);
 $loginAttempts = $auditService->getLoginAttempts(20);
 
-// Fetch active foreign keys and table integrity status from information_schema
-$dbName = getenv('DB_DATABASE') ?: 'kvm_hospital';
-$fkStmt = $db->prepare("
-    SELECT 
-        TABLE_NAME, 
-        COLUMN_NAME, 
-        CONSTRAINT_NAME, 
-        REFERENCED_TABLE_NAME, 
-        REFERENCED_COLUMN_NAME
-    FROM information_schema.KEY_COLUMN_USAGE
-    WHERE TABLE_SCHEMA = :db AND REFERENCED_TABLE_NAME IS NOT NULL
-    LIMIT 15
-");
-$fkStmt->execute(['db' => $dbName]);
-$activeFKs = $fkStmt->fetchAll();
+// Fetch active foreign keys and table integrity status (Dual Engine: MySQL information_schema / SQLite PRAGMA)
+$activeFKs = [];
+$isSqlite = ($db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite');
+
+if ($isSqlite) {
+    try {
+        $tables = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($tables as $tbl) {
+            $fks = $db->query("PRAGMA foreign_key_list(`{$tbl}`)")->fetchAll();
+            foreach ($fks as $fk) {
+                $activeFKs[] = [
+                    'TABLE_NAME'             => $tbl,
+                    'COLUMN_NAME'            => $fk['from'] ?? '',
+                    'CONSTRAINT_NAME'        => 'fk_' . $tbl . '_' . ($fk['id'] ?? 0),
+                    'REFERENCED_TABLE_NAME'  => $fk['table'] ?? '',
+                    'REFERENCED_COLUMN_NAME' => $fk['to'] ?? '',
+                ];
+                if (count($activeFKs) >= 15) break 2;
+            }
+        }
+    } catch (Throwable $e) {
+        $activeFKs = [];
+    }
+} else {
+    try {
+        $dbName = getenv('DB_DATABASE') ?: 'kvm_hospital';
+        $fkStmt = $db->prepare("
+            SELECT 
+                TABLE_NAME, 
+                COLUMN_NAME, 
+                CONSTRAINT_NAME, 
+                REFERENCED_TABLE_NAME, 
+                REFERENCED_COLUMN_NAME
+            FROM information_schema.KEY_COLUMN_USAGE
+            WHERE TABLE_SCHEMA = :db AND REFERENCED_TABLE_NAME IS NOT NULL
+            LIMIT 15
+        ");
+        $fkStmt->execute(['db' => $dbName]);
+        $activeFKs = $fkStmt->fetchAll();
+    } catch (Throwable $e) {
+        $activeFKs = [];
+    }
+}
 
 // Role change logs
 $roleChanges = $db->query("

@@ -39,6 +39,9 @@ if (is_logged_in()) {
     
     <!-- Custom Healthcare SaaS Design System -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css">
+
+    <!-- Chart.js 4.4.0 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="app-wrapper">
@@ -89,7 +92,7 @@ if (is_logged_in()) {
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                             <li class="px-3 py-2 border-bottom">
                                 <small class="text-muted d-block">Signed in as</small>
-                                <strong class="text-dark"><?= e($currentUser['email']) ?></strong>
+                                <strong class="text-dark"><?= e($currentUser['email'] ?? $currentUser['username'] ?? 'Staff') ?></strong>
                             </li>
                             <li>
                                 <a class="dropdown-item py-2" href="<?= get_dashboard_route_for_role($primaryRole) ?>">

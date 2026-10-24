@@ -43,16 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $encounterId = (int)$encStmt->fetchColumn();
 
                 if ($encounterId === 0) {
+                    $docId = (int)$db->query("SELECT id FROM `doctor_profiles` LIMIT 1")->fetchColumn() ?: 1;
+                    $deptId = (int)$db->query("SELECT id FROM `departments` LIMIT 1")->fetchColumn() ?: 1;
                     $encCode = generate_encounter_number($db);
                     $insEnc = $db->prepare("
                         INSERT INTO `patient_encounters` (
                             `encounter_number`, `patient_id`, `doctor_id`, `department_id`,
                             `encounter_type`, `status`, `started_at`
                         ) VALUES (
-                            :code, :pid, 1, 3, 'inpatient', 'active', NOW()
+                            :code, :pid, :doc_id, :dept_id, 'inpatient', 'active', NOW()
                         )
                     ");
-                    $insEnc->execute(['code' => $encCode, 'pid' => $patientId]);
+                    $insEnc->execute(['code' => $encCode, 'pid' => $patientId, 'doc_id' => $docId, 'dept_id' => $deptId]);
                     $encounterId = (int)$db->lastInsertId();
                 }
             }
@@ -66,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', 'Please choose both an available bed and a valid patient.');
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/bedmatrix/index.php');
     }
 
     // Action 2: Discharge Bed
@@ -80,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', $res['message']);
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/bedmatrix/index.php');
     }
 
     // Action 3: Mark Bed Cleaned
@@ -92,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', $res['message']);
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/bedmatrix/index.php');
     }
 
     // Action 4: Transfer Bed
@@ -107,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', $res['message']);
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/bedmatrix/index.php');
     }
 }
 

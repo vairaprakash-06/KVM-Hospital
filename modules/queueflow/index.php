@@ -33,6 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $priority     = $_POST['priority_level'] ?? 'normal';
         $reason       = !empty($_POST['priority_reason']) ? sanitize_input($_POST['priority_reason']) : null;
 
+        if ($doctorId && !$departmentId) {
+            $dStmt = $db->prepare("SELECT department_id FROM `doctor_profiles` WHERE id = :id");
+            $dStmt->execute(['id' => $doctorId]);
+            $departmentId = (int)$dStmt->fetchColumn();
+        }
+
         if ($patientId && $doctorId && $departmentId) {
             $res = $queueService->checkInPatient($patientId, $doctorId, $departmentId, $appointmentId, $priority, $reason);
             if ($res['success']) {
@@ -43,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', 'Please select valid Patient, Doctor, and Department.');
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/queueflow/index.php');
     }
 
     // Action 2: Call patient
@@ -53,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($queueService->callPatient($queueId, $doctorId)) {
             set_flash('info', "Patient called into consultation room.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/queueflow/index.php');
     }
 
     // Action 3: Start Consultation
@@ -63,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($queueService->startConsultation($queueId, $doctorId)) {
             set_flash('success', "Consultation session started.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/queueflow/index.php');
     }
 
     // Action 4: Complete Consultation
@@ -73,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($queueService->completeConsultation($queueId, $doctorId)) {
             set_flash('success', "Consultation completed successfully.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/queueflow/index.php');
     }
 
     // Action 5: Priority Override
@@ -83,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reason   = sanitize_input($_POST['override_reason'] ?? '');
 
         if ($queueId && !empty($reason)) {
-            if ($queueService->updatePriority($queueId, $priority, $reason, $currentUser['id'])) {
+            if ($queueService->updatePriority($queueId, $priority, $reason, (int)($currentUser['id'] ?? 0))) {
                 set_flash('warning', "Queue priority updated to " . strtoupper($priority) . ". Reason recorded in TrustLedger.");
             } else {
                 set_flash('danger', "Failed to update queue priority.");
@@ -91,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             set_flash('danger', "Documented justification reason is mandatory for priority escalation.");
         }
-        redirect('index.php');
+        redirect(BASE_URL . '/modules/queueflow/index.php');
     }
 }
 
@@ -252,7 +258,7 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
                     <th class="text-end" style="width: 190px;">Flow Actions</th>
                 </tr>
             </thead>
-            <tbody id="queueFlowMonitor" data-doctor-id="<?= e((string)$filterDoctor) ?>" data-dept-id="<?= e((string)$filterDept) ?>">
+            <tbody id="queueFlowMonitor" data-api-url="<?= BASE_URL ?>/api/queue.php" data-doctor-id="<?= e((string)$filterDoctor) ?>" data-dept-id="<?= e((string)$filterDept) ?>">
                 <?php if (empty($entries)): ?>
                     <tr>
                         <td colspan="8" class="text-center py-4 text-muted">
