@@ -1,0 +1,547 @@
+/* ====================================================================
+   KVM Hospital Management System — NexusCare
+   Modern Healthcare SaaS Design System
+   ==================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+:root {
+  --nexus-navy-950: #081120;
+  --nexus-navy-900: #0f1e36;
+  --nexus-navy-800: #192e52;
+  --nexus-navy-700: #233e6b;
+  --nexus-teal-600: #0d9488;
+  --nexus-teal-500: #14b8a6;
+  --nexus-teal-400: #2dd4bf;
+  --nexus-teal-100: #ccfbf1;
+  --nexus-teal-50:  #f0fdfa;
+  --nexus-blue-600: #0284c7;
+  --nexus-blue-500: #0ea5e9;
+  --nexus-blue-50:  #f0f9ff;
+  --nexus-surface-bg: #f8fafc;
+  --nexus-surface-card: #ffffff;
+  --nexus-border: #e2e8f0;
+  --nexus-border-light: #f1f5f9;
+  --nexus-text-primary: #0f172a;
+  --nexus-text-secondary: #475569;
+  --nexus-text-muted: #94a3b8;
+  --nexus-danger: #ef4444;
+  --nexus-danger-bg: #fef2f2;
+  --nexus-warning: #f59e0b;
+  --nexus-warning-bg: #fffbeb;
+  --nexus-success: #10b981;
+  --nexus-success-bg: #ecfdf5;
+  --nexus-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --nexus-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --nexus-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --sidebar-width: 270px;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--nexus-surface-bg);
+  color: var(--nexus-text-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------------------------
+   Layout & Grid
+   -------------------------------------------------------------------- */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, var(--nexus-navy-950) 0%, var(--nexus-navy-900) 100%);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--nexus-navy-700) transparent;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--nexus-surface-bg);
+  transition: all 0.3s ease;
+}
+
+/* --------------------------------------------------------------------
+   Sidebar Elements
+   -------------------------------------------------------------------- */
+.sidebar-header {
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--nexus-teal-500) 0%, var(--nexus-blue-600) 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.35rem;
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.35);
+}
+
+.brand-text .title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.brand-text .subtitle {
+  font-size: 0.72rem;
+  color: var(--nexus-teal-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  padding: 1rem 0.75rem;
+  flex: 1;
+}
+
+.nav-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--nexus-text-muted);
+  padding: 0.85rem 0.75rem 0.35rem;
+  display: block;
+}
+
+.sidebar-nav .nav-link {
+  color: #94a3b8;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.sidebar-nav .nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateX(3px);
+}
+
+.sidebar-nav .nav-link.active {
+  color: #ffffff;
+  background: linear-gradient(90deg, rgba(20, 184, 166, 0.2) 0%, rgba(20, 184, 166, 0.05) 100%);
+  border-left: 3px solid var(--nexus-teal-400);
+  font-weight: 600;
+}
+
+.sidebar-nav .nav-link i {
+  font-size: 1.1rem;
+  width: 22px;
+  text-align: center;
+  color: var(--nexus-teal-400);
+}
+
+.feature-pill {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  background: rgba(20, 184, 166, 0.18);
+  color: var(--nexus-teal-400);
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* --------------------------------------------------------------------
+   Top Header Navigation
+   -------------------------------------------------------------------- */
+.topbar {
+  background: var(--nexus-surface-card);
+  border-bottom: 1px solid var(--nexus-border);
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--nexus-surface-bg);
+  padding: 0.4rem 0.85rem;
+  border-radius: 40px;
+  border: 1px solid var(--nexus-border);
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--nexus-navy-800) 0%, var(--nexus-navy-950) 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------
+   Cards & Widgets
+   -------------------------------------------------------------------- */
+.nexus-card {
+  background: var(--nexus-surface-card);
+  border: 1px solid var(--nexus-border);
+  border-radius: 12px;
+  box-shadow: var(--nexus-shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.nexus-card:hover {
+  box-shadow: var(--nexus-shadow);
+}
+
+.nexus-card-header {
+  padding: 1.15rem 1.35rem;
+  border-bottom: 1px solid var(--nexus-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+}
+
+.nexus-card-body {
+  padding: 1.35rem;
+}
+
+.stat-widget {
+  padding: 1.25rem 1.35rem;
+  border-radius: 12px;
+  background: var(--nexus-surface-card);
+  border: 1px solid var(--nexus-border);
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  transition: all 0.2s ease;
+}
+
+.stat-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--nexus-shadow);
+}
+
+.stat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.teal { background: var(--nexus-teal-50); color: var(--nexus-teal-600); }
+.stat-icon.blue { background: var(--nexus-blue-50); color: var(--nexus-blue-600); }
+.stat-icon.amber { background: var(--nexus-warning-bg); color: var(--nexus-warning); }
+.stat-icon.danger { background: var(--nexus-danger-bg); color: var(--nexus-danger); }
+.stat-icon.emerald { background: var(--nexus-success-bg); color: var(--nexus-success); }
+
+.stat-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--nexus-text-primary);
+  font-family: 'Outfit', sans-serif;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--nexus-text-secondary);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------
+   Tables
+   -------------------------------------------------------------------- */
+.table-nexus {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-nexus th {
+  background: var(--nexus-surface-bg);
+  color: var(--nexus-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--nexus-border);
+  white-space: nowrap;
+}
+
+.table-nexus td {
+  padding: 0.85rem 1rem;
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--nexus-border-light);
+  vertical-align: middle;
+}
+
+.table-nexus tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* --------------------------------------------------------------------
+   Pills, Badges & Status Indicators
+   -------------------------------------------------------------------- */
+.badge-nexus {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-status-waiting { background: #e0f2fe; color: #0369a1; }
+.badge-status-called { background: #fef3c7; color: #92400e; }
+.badge-status-in_consultation { background: #ecfdf5; color: #065f46; }
+.badge-status-completed { background: #f1f5f9; color: #475569; }
+.badge-status-cancelled { background: #fee2e2; color: #991b1b; }
+
+.badge-priority-normal { background: #f1f5f9; color: #475569; }
+.badge-priority-urgent { background: #fef3c7; color: #b45309; font-weight: 700; }
+.badge-priority-emergency { background: #fee2e2; color: #b91c1c; font-weight: 800; animation: pulse 2s infinite; }
+
+.badge-bed-available { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.badge-bed-occupied { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.badge-bed-cleaning { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.badge-bed-reserved { background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; }
+.badge-bed-out_of_service { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* --------------------------------------------------------------------
+   Buttons & Forms
+   -------------------------------------------------------------------- */
+.btn-nexus-primary {
+  background: linear-gradient(135deg, var(--nexus-teal-600) 0%, #0f766e 100%);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.15rem;
+  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-nexus-primary:hover {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(13, 148, 136, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-nexus-dark {
+  background: var(--nexus-navy-900);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.55rem 1.15rem;
+  transition: all 0.2s ease;
+}
+
+.btn-nexus-dark:hover {
+  background: var(--nexus-navy-950);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.form-control, .form-select {
+  border: 1px solid var(--nexus-border);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.88rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--nexus-teal-500);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.18);
+}
+
+/* --------------------------------------------------------------------
+   CareTrail Timeline Styling
+   -------------------------------------------------------------------- */
+.caretrail-timeline {
+  position: relative;
+  padding: 1.5rem 0 1.5rem 2.25rem;
+}
+
+.caretrail-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 14px;
+  width: 2px;
+  background: #cbd5e1;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.25rem;
+  top: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.8rem;
+  box-shadow: 0 0 0 4px #fff;
+}
+
+.timeline-marker.info { background: var(--nexus-blue-600); }
+.timeline-marker.success { background: var(--nexus-success); }
+.timeline-marker.warning { background: var(--nexus-warning); }
+.timeline-marker.critical { background: var(--nexus-danger); }
+
+.timeline-card {
+  background: #fff;
+  border: 1px solid var(--nexus-border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--nexus-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.timeline-card:hover {
+  box-shadow: var(--nexus-shadow);
+  border-color: var(--nexus-teal-400);
+}
+
+/* --------------------------------------------------------------------
+   BedMatrix Grid Visualizer
+   -------------------------------------------------------------------- */
+.bed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+.bed-card {
+  background: #fff;
+  border-radius: 10px;
+  border: 2px solid var(--nexus-border);
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.bed-card.status-available {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.bed-card.status-occupied {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.bed-card.status-cleaning {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.bed-card.status-reserved {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+.bed-card.status-out_of_service {
+  border-color: #94a3b8;
+  background: #f8fafc;
+  opacity: 0.6;
+}
+
+.bed-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--nexus-shadow);
+}
+
+.bed-icon {
+  font-size: 2rem;
+  margin-bottom: 0.35rem;
+}
+
+/* --------------------------------------------------------------------
+   Responsive Mobile
+   -------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.show {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0;
+  }
+}

@@ -23,5 +23,5 @@ vendor/
 node_modules/
 
 # Local server junctions
-assets/
-public/modules/
+/assets/
+/public/modules/
