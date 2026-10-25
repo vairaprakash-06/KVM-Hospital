@@ -23,6 +23,8 @@ To optimize administrative workflow and governance:
 | Manage Departments & Wings | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Manage Doctor Profiles & Schedules | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Manage Bed & Ward Inventory | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Manage Doctor & Staff Salaries | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| View Departmental Payroll Analytics | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | **Patient Registration & Scheduling** | | | | | | | | | |
 | Register New Patients | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Edit Patient Demographics | ✅ | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | Own |

@@ -209,11 +209,21 @@ Access is consolidated into three primary entry points, with the Hospital Admini
 ---
 
 ## 16. Testing Instructions
-Run the automated test suite from the terminal:
+Run the automated test suites from the terminal:
 ```bash
+# 1. Salary & Payroll Integrity Suite (16 Tests: Ranges, Strict Uniqueness, History & Idempotency)
+php tests/test_salary_management.php
+
+# 2. Core System Integrity Test Suite (11 Tests)
 php tests/run_tests.php
+
+# 3. Role Consolidation & Universal Admin Access Test (14 Tests)
+php tests/test_role_access_consolidation.php
+
+# 4. 89 Departments Scale Seeder Verification (178 Docs, 356 Staff, 2,670 Appts)
+php tests/verify_scale_seeder.php
 ```
-**Results:** 11 of 11 tests pass with zero failures. Detailed report in [`docs/TEST_REPORT.md`](file:///c:/Users/74185/.gemini/antigravity-ide/scratch/kvm-hospital/docs/TEST_REPORT.md).
+**Results:** All test suites pass with zero failures. Detailed report in [`docs/TEST_REPORT.md`](file:///c:/Users/74185/.gemini/antigravity-ide/scratch/kvm-hospital/docs/TEST_REPORT.md).
 
 ---
 

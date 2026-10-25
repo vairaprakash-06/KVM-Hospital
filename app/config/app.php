@@ -20,14 +20,16 @@ if ($appEnv === 'development') {
 }
 
 // Session configuration
-if (session_status() === PHP_SESSION_NONE) {
-    ini_set('session.cookie_httponly', '1');
-    ini_set('session.use_only_cookies', '1');
-    ini_set('session.cookie_samesite', 'Lax');
-    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-        ini_set('session.cookie_secure', '1');
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    if (php_sapi_name() !== 'cli') {
+        ini_set('session.cookie_httponly', '1');
+        ini_set('session.use_only_cookies', '1');
+        ini_set('session.cookie_samesite', 'Lax');
+        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+            ini_set('session.cookie_secure', '1');
+        }
     }
-    session_start();
+    @session_start();
 }
 
 // Global Application Constants

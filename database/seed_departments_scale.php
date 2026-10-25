@@ -550,6 +550,15 @@ function seed_departments_scale(?PDO $db = null, bool $quiet = false): array {
     $out("   Appointments verified: Total {$finalApptTotal} across all departments (+{$totalApptsAdded} added).");
 
     // -------------------------------------------------------------------------
+    // 6. INITIALIZING UNIQUE DOCTOR & STAFF SALARIES
+    // -------------------------------------------------------------------------
+    require_once __DIR__ . '/../app/services/SalaryService.php';
+    $salaryService = new SalaryService($db);
+    $salResult = $salaryService->seedInitialSalaries();
+    $out("6. Ensuring unique salaries for all Doctors (₹50k-₹90k) and Staff (₹30k-₹60k)...");
+    $out("   Salaries initialized: {$salResult['doctors_inserted']} doctors, {$salResult['staff_inserted']} staff members.");
+
+    // -------------------------------------------------------------------------
     // 7. FINAL VERIFICATION SUMMARY
     // -------------------------------------------------------------------------
     $vDepts = (int)$db->query("SELECT COUNT(*) FROM `departments`")->fetchColumn();
@@ -557,12 +566,17 @@ function seed_departments_scale(?PDO $db = null, bool $quiet = false): array {
     $vStaff = (int)$db->query("SELECT COUNT(*) FROM `staff_profiles`")->fetchColumn();
     $vAppts = (int)$db->query("SELECT COUNT(*) FROM `appointments`")->fetchColumn();
 
+    $salStats = $salaryService->getPayrollStats();
+
     $out("\n=== FINAL SEEDING AUDIT SUMMARY ===");
     $out("Departments:       {$vDepts} (Expected: 89)   " . ($vDepts === 89 ? "[PASS]" : "[CHECK]"));
     $out("Doctor Profiles:   {$vDocs} (Expected: 178)  " . ($vDocs === 178 ? "[PASS]" : "[CHECK]"));
     $out("Staff Profiles:    {$vStaff} (Expected: 356)  " . ($vStaff === 356 ? "[PASS]" : "[CHECK]"));
     $out("Appointments:      {$vAppts} (Expected: 2670) " . ($vAppts === 2670 ? "[PASS]" : "[CHECK]"));
     $out("Patients Pool:     {$totalPatients} Fictional Tamil Profiles");
+    $out("Doctor Salaries:   {$salStats['total_doctors']} active (Expenditure: " . format_currency($salStats['doctor_payroll']) . ", Avg: " . format_currency($salStats['avg_doctor_salary']) . ")");
+    $out("Staff Salaries:    {$salStats['total_staff']} active (Expenditure: " . format_currency($salStats['staff_payroll']) . ", Avg: " . format_currency($salStats['avg_staff_salary']) . ")");
+    $out("Combined Payroll:  " . format_currency($salStats['combined_monthly_payroll']));
 
     // Check every single department has exactly 2 doctors, 4 staff, 30 appointments
     $breakdown = $db->query("

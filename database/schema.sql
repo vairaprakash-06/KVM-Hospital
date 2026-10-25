@@ -871,6 +871,46 @@ CREATE TABLE `financial_adjustments` (
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------------------------
+-- L. Salary & Payroll Management
+-- --------------------------------------------------------------------
+
+-- 48. Employee Salaries
+CREATE TABLE `employee_salaries` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `employee_id` INT NOT NULL,
+  `employee_type` ENUM('doctor', 'staff') NOT NULL,
+  `department_id` INT NULL,
+  `monthly_salary` DECIMAL(10,2) NOT NULL,
+  `effective_from` DATE NOT NULL,
+  `effective_to` DATE NULL,
+  `status` ENUM('active', 'superseded') DEFAULT 'active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `uk_emp_sal` (`employee_id`, `employee_type`),
+  FOREIGN KEY (`department_id`) REFERENCES `departments`(`id`) ON DELETE SET NULL,
+  INDEX `idx_salary_dept` (`department_id`),
+  INDEX `idx_salary_type` (`employee_type`),
+  INDEX `idx_salary_amount` (`monthly_salary`)
+) ENGINE=InnoDB;
+
+-- 49. Salary History
+CREATE TABLE `salary_history` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `salary_id` INT NOT NULL,
+  `employee_id` INT NOT NULL,
+  `employee_type` ENUM('doctor', 'staff') NOT NULL,
+  `previous_salary` DECIMAL(10,2) NOT NULL,
+  `new_salary` DECIMAL(10,2) NOT NULL,
+  `change_reason` VARCHAR(255) NULL,
+  `changed_by` INT NULL,
+  `effective_date` DATE NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`salary_id`) REFERENCES `employee_salaries`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`changed_by`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+  INDEX `idx_sal_hist_emp` (`employee_id`, `employee_type`)
+) ENGINE=InnoDB;
+
+-- --------------------------------------------------------------------
 -- K. Views for Operational Intelligence & Fast Reporting
 -- --------------------------------------------------------------------
 

@@ -169,6 +169,10 @@ $currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
                 <i class="bi bi-diagram-3"></i>
                 <span>Departments</span>
             </a>
+            <a href="<?= BASE_URL ?>/modules/admin/salaries.php" class="nav-link <?= strpos($currentScript, 'admin/salaries') !== false ? 'active' : '' ?>">
+                <i class="bi bi-wallet2"></i>
+                <span>Salary Management</span>
+            </a>
         <?php endif; ?>
     </nav>
 </aside>
