@@ -13,6 +13,11 @@ require_once __DIR__ . '/../../app/middleware/permissions.php';
 
 require_role('hospital_admin', 'super_admin');
 
+if (!isset($_GET['view']) || $_GET['view'] !== 'legacy') {
+    require __DIR__ . '/../../dashboard.php';
+    exit;
+}
+
 $db = get_db();
 
 // 1. Live Operational KPI Counters
@@ -63,6 +68,9 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
     </div>
     
     <div class="d-flex align-items-center gap-2">
+        <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-speedometer2 me-1"></i>Executive Dashboard
+        </a>
         <span class="badge bg-light text-dark border px-3 py-2">
             <i class="bi bi-clock me-1 text-primary"></i><?= date('l, d F Y') ?>
         </span>

@@ -66,6 +66,12 @@ if ($uriPath === '/unauthorized' || $uriPath === '/unauthorized.php') {
     exit;
 }
 
+if ($uriPath === '/dashboard' || $uriPath === '/dashboard.php') {
+    $_SERVER['SCRIPT_NAME'] = '/dashboard.php';
+    require __DIR__ . '/../dashboard.php';
+    exit;
+}
+
 // 3. API Endpoints
 if (str_starts_with($uriPath, '/api/queue')) {
     $_SERVER['SCRIPT_NAME'] = '/api/queue.php';
