@@ -22,6 +22,11 @@ Thumbs.db
 vendor/
 node_modules/
 
+# Python cache
+__pycache__/
+*.pyc
+
 # Local server junctions
 /assets/
 /public/modules/
+

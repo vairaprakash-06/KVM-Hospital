@@ -73,6 +73,38 @@ if (str_starts_with($uriPath, '/api/queue')) {
     exit;
 }
 
+// 3b. Dedicated Hospital Pharmacy Intelligence SPA (React & FastAPI)
+if (str_starts_with($uriPath, '/hospital-pharmacy')) {
+    $subPath = substr($uriPath, strlen('/hospital-pharmacy'));
+    if ($subPath === '' || $subPath === '/') {
+        $subPath = '/index.html';
+    }
+    $spaFile = __DIR__ . '/../hospital-pharmacy/frontend/dist' . $subPath;
+    if (file_exists($spaFile) && !is_dir($spaFile)) {
+        $ext = strtolower(pathinfo($spaFile, PATHINFO_EXTENSION));
+        $mimes = [
+            'html' => 'text/html; charset=utf-8',
+            'css'  => 'text/css; charset=utf-8',
+            'js'   => 'application/javascript; charset=utf-8',
+            'svg'  => 'image/svg+xml',
+            'png'  => 'image/png',
+            'jpg'  => 'image/jpeg',
+            'ico'  => 'image/x-icon',
+            'json' => 'application/json'
+        ];
+        header('Content-Type: ' . ($mimes[$ext] ?? 'application/octet-stream'));
+        readfile($spaFile);
+        exit;
+    }
+    $fallbackIndex = __DIR__ . '/../hospital-pharmacy/frontend/dist/index.html';
+    if (file_exists($fallbackIndex)) {
+        header('Content-Type: text/html; charset=utf-8');
+        readfile($fallbackIndex);
+        exit;
+    }
+}
+
+
 // 4. Hospital Modules
 if (str_starts_with($uriPath, '/modules/')) {
     $targetFile = __DIR__ . '/..' . $uriPath;

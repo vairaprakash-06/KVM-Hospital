@@ -43,10 +43,14 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
     </div>
     
     <div class="d-flex align-items-center gap-2">
+        <a href="/hospital-pharmacy" class="btn btn-outline-primary btn-sm" target="_blank">
+            <i class="bi bi-cpu me-1"></i>Launch Pharmacy Intelligence Platform
+        </a>
         <a href="inventory.php" class="btn btn-nexus-primary btn-sm">
             <i class="bi bi-box-seam me-1"></i>Manage Full Inventory & Batches
         </a>
     </div>
+
 </div>
 
 <!-- KPI Cards -->
