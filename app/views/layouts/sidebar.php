@@ -16,28 +16,38 @@ $currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
 <aside class="sidebar">
     <!-- Header / Brand -->
     <div class="sidebar-header">
-        <div class="brand-icon" style="background: rgba(14, 165, 233, 0.2); border: 1px solid rgba(14, 165, 233, 0.4); color: #38bdf8; box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);">
-            <i class="bi bi-plus-lg fw-bold"></i>
+        <div class="brand-icon">
+            <i class="bi bi-hospital"></i>
         </div>
         <div class="brand-text">
-            <div class="title fw-bold text-white">NexusCare</div>
-            <div class="subtitle text-uppercase" style="color: #38bdf8; font-size: 0.65rem; letter-spacing: 0.1em; font-weight: 700;">KVM HOSPITAL OS</div>
+            <div class="title">NexusCare</div>
+            <div class="subtitle">KVM Hospital OS</div>
         </div>
     </div>
 
     <!-- Navigation List -->
     <nav class="sidebar-nav">
-        <!-- 1. Executive Dashboard -->
-        <a href="<?= BASE_URL ?>/dashboard.php" class="nav-link <?= (basename($currentScript) === 'dashboard.php' || (strpos($currentScript, 'dashboard') !== false && !strpos($currentScript, 'super_admin'))) ? 'active' : '' ?>">
-            <i class="bi bi-house-door-fill"></i>
-            <span>Dashboard</span>
-        </a>
-
-        <!-- 2. Role Dashboard (if super admin) -->
+        <!-- 1. Role Dashboard -->
+        <span class="nav-section-label">Command Center</span>
+        
         <?php if ($primaryRole === 'super_admin'): ?>
             <a href="<?= BASE_URL ?>/modules/admin/super_admin_dashboard.php" class="nav-link <?= strpos($currentScript, 'super_admin') !== false ? 'active' : '' ?>">
                 <i class="bi bi-shield-lock"></i>
                 <span>Super Admin</span>
+            </a>
+        <?php endif; ?>
+
+        <?php if (in_array($primaryRole, ['super_admin', 'hospital_admin'], true)): ?>
+            <a href="<?= BASE_URL ?>/modules/admin/dashboard.php" class="nav-link <?= (strpos($currentScript, 'admin/dashboard') !== false) ? 'active' : '' ?>">
+                <i class="bi bi-speedometer2"></i>
+                <span>Hospital Admin</span>
+            </a>
+        <?php endif; ?>
+
+        <?php if ($primaryRole === 'doctor'): ?>
+            <a href="<?= BASE_URL ?>/modules/doctor/dashboard.php" class="nav-link <?= strpos($currentScript, 'doctor/dashboard') !== false ? 'active' : '' ?>">
+                <i class="bi bi-heart-pulse"></i>
+                <span>Doctor Workspace</span>
             </a>
         <?php endif; ?>
 
@@ -165,13 +175,4 @@ $currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
             </a>
         <?php endif; ?>
     </nav>
-
-    <!-- Bottom Status Indicator -->
-    <div class="sidebar-footer p-3 border-top border-secondary border-opacity-10 d-flex align-items-center gap-2 mt-auto" style="background: rgba(0,0,0,0.2);">
-        <span class="status-indicator-dot" style="width: 8px; height: 8px; border-radius: 50%; background-color: #10b981; box-shadow: 0 0 10px #10b981; animation: pulse 2s infinite; flex-shrink: 0;"></span>
-        <div>
-            <div class="fw-semibold text-white" style="font-size: 0.75rem; line-height: 1.1;">System Online</div>
-            <div class="text-secondary" style="font-size: 0.65rem;">NexusCare v1.0.0</div>
-        </div>
-    </div>
 </aside>

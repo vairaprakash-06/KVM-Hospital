@@ -17,11 +17,6 @@ require_once __DIR__ . '/../../app/services/AuditService.php';
 
 require_role('doctor', 'hospital_admin', 'super_admin');
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && (!isset($_GET['view']) || $_GET['view'] !== 'clinical')) {
-    require __DIR__ . '/../../dashboard.php';
-    exit;
-}
-
 $db = get_db();
 $currentUser = current_user();
 $queueService = new QueueService($db);
@@ -232,9 +227,6 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
         </div>
         
         <div class="d-flex align-items-center gap-2">
-            <a href="<?= BASE_URL ?>/dashboard.php" class="btn btn-outline-secondary">
-                <i class="bi bi-speedometer2 me-1"></i>Executive Dashboard
-            </a>
             <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 py-2 px-3">
                 <i class="bi bi-broadcast me-1"></i>QueueFlow Sync Active
             </span>

@@ -198,8 +198,8 @@ function get_client_ip(): string {
 function get_dashboard_route_for_role(string $role): string {
     return match ($role) {
         'super_admin' => BASE_URL . '/modules/admin/super_admin_dashboard.php',
-        'hospital_admin' => BASE_URL . '/dashboard.php',
-        'doctor' => BASE_URL . '/dashboard.php',
+        'hospital_admin' => BASE_URL . '/modules/admin/dashboard.php',
+        'doctor' => BASE_URL . '/modules/doctor/dashboard.php',
         'receptionist' => BASE_URL . '/modules/reception/dashboard.php',
         'nurse' => BASE_URL . '/modules/nurse/dashboard.php',
         'lab_technician' => BASE_URL . '/modules/laboratory/dashboard.php',
