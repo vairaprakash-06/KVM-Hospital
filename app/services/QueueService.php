@@ -198,16 +198,18 @@ class QueueService {
     /**
      * Doctor calls next patient into consultation room
      */
-    public function callPatient(int $queueEntryId, int $doctorId): bool {
-        $stmt = $this->db->prepare("
-            UPDATE `queue_entries`
-            SET `status` = 'called', `updated_at` = NOW()
-            WHERE `id` = :id AND `doctor_id` = :doc_id AND `status` = 'waiting'
-        ");
-        $stmt->execute(['id' => $queueEntryId, 'doc_id' => $doctorId]);
+    public function callPatient(int $queueEntryId, ?int $doctorId = null): bool {
+        $sql = "UPDATE `queue_entries` SET `status` = 'called', `updated_at` = NOW() WHERE `id` = :id AND `status` = 'waiting'";
+        $params = ['id' => $queueEntryId];
+        if (!empty($doctorId)) {
+            $sql .= " AND `doctor_id` = :doc_id";
+            $params['doc_id'] = $doctorId;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
 
         if ($stmt->rowCount() > 0) {
-            $this->auditService->log('STATUS_CHANGE', 'QueueEntry', $queueEntryId, "Doctor called token for entry #{$queueEntryId}");
+            $this->auditService->log('STATUS_CHANGE', 'QueueEntry', $queueEntryId, "Staff/Doctor called token for entry #{$queueEntryId}");
             return true;
         }
         return false;
@@ -216,19 +218,23 @@ class QueueService {
     /**
      * Start consultation
      */
-    public function startConsultation(int $queueEntryId, int $doctorId): bool {
+    public function startConsultation(int $queueEntryId, ?int $doctorId = null): bool {
         $this->db->beginTransaction();
         try {
             // Update queue entry
-            $stmt = $this->db->prepare("
-                UPDATE `queue_entries`
-                SET `status` = 'in_consultation',
-                    `consultation_start_time` = NOW(),
-                    `estimated_wait_time_minutes` = 0,
-                    `updated_at` = NOW()
-                WHERE `id` = :id AND `doctor_id` = :doc_id
-            ");
-            $stmt->execute(['id' => $queueEntryId, 'doc_id' => $doctorId]);
+            $sql = "UPDATE `queue_entries`
+                    SET `status` = 'in_consultation',
+                        `consultation_start_time` = NOW(),
+                        `estimated_wait_time_minutes` = 0,
+                        `updated_at` = NOW()
+                    WHERE `id` = :id";
+            $params = ['id' => $queueEntryId];
+            if (!empty($doctorId)) {
+                $sql .= " AND `doctor_id` = :doc_id";
+                $params['doc_id'] = $doctorId;
+            }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
 
             // Retrieve details for CareTrail
             $fetch = $this->db->prepare("
@@ -257,7 +263,7 @@ class QueueService {
                 );
             }
 
-            $this->auditService->log('STATUS_CHANGE', 'QueueEntry', $queueEntryId, "Started consultation for Token #{$entry['token_number']}");
+            $this->auditService->log('STATUS_CHANGE', 'QueueEntry', $queueEntryId, "Started consultation for Token #" . ($entry['token_number'] ?? $queueEntryId));
             $this->db->commit();
             return true;
         } catch (Exception $e) {
@@ -270,17 +276,21 @@ class QueueService {
     /**
      * Complete consultation and update metrics
      */
-    public function completeConsultation(int $queueEntryId, int $doctorId): bool {
+    public function completeConsultation(int $queueEntryId, ?int $doctorId = null): bool {
         $this->db->beginTransaction();
         try {
-            $stmt = $this->db->prepare("
-                UPDATE `queue_entries`
-                SET `status` = 'completed',
-                    `completion_time` = NOW(),
-                    `updated_at` = NOW()
-                WHERE `id` = :id AND `doctor_id` = :doc_id
-            ");
-            $stmt->execute(['id' => $queueEntryId, 'doc_id' => $doctorId]);
+            $sql = "UPDATE `queue_entries`
+                    SET `status` = 'completed',
+                        `completion_time` = NOW(),
+                        `updated_at` = NOW()
+                    WHERE `id` = :id";
+            $params = ['id' => $queueEntryId];
+            if (!empty($doctorId)) {
+                $sql .= " AND `doctor_id` = :doc_id";
+                $params['doc_id'] = $doctorId;
+            }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
 
             $fetch = $this->db->prepare("
                 SELECT patient_id, appointment_id, department_id, token_number, consultation_start_time 
@@ -308,12 +318,72 @@ class QueueService {
                 );
             }
 
-            $this->auditService->log('STATUS_CHANGE', 'QueueEntry', $queueEntryId, "Completed consultation for Token #{$entry['token_number']}");
+            $this->auditService->log('STATUS_CHANGE', 'QueueEntry', $queueEntryId, "Completed consultation for Token #" . ($entry['token_number'] ?? $queueEntryId));
             $this->db->commit();
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();
             error_log("Failed to complete consultation: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Cancel patient from queue
+     */
+    public function cancelPatient(int $queueEntryId, ?int $doctorId = null, ?int $cancelledBy = null, ?string $reason = null): bool {
+        $this->db->beginTransaction();
+        try {
+            $sql = "UPDATE `queue_entries`
+                    SET `status` = 'cancelled',
+                        `updated_at` = NOW()
+                    WHERE `id` = :id";
+            $params = ['id' => $queueEntryId];
+            if (!empty($doctorId)) {
+                $sql .= " AND `doctor_id` = :doc_id";
+                $params['doc_id'] = $doctorId;
+            }
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+
+            $fetch = $this->db->prepare("
+                SELECT patient_id, appointment_id, department_id, token_number 
+                FROM `queue_entries` WHERE `id` = :id
+            ");
+            $fetch->execute(['id' => $queueEntryId]);
+            $entry = $fetch->fetch();
+
+            if ($entry) {
+                if (!empty($entry['appointment_id'])) {
+                    $this->db->prepare("
+                        UPDATE `appointments` SET `status` = 'cancelled' WHERE `id` = :id
+                    ")->execute(['id' => $entry['appointment_id']]);
+                }
+
+                $this->careTrailService->recordEvent(
+                    patientId: (int)$entry['patient_id'],
+                    eventType: 'consultation_cancelled',
+                    eventTitle: "Queue Token Cancelled: Token #{$entry['token_number']}",
+                    eventDescription: "Patient consultation cancelled. Reason: " . ($reason ?: 'Cancelled by hospital staff'),
+                    departmentId: (int)$entry['department_id'],
+                    sourceTable: 'queue_entries',
+                    sourceId: $queueEntryId,
+                    severity: 'warning'
+                );
+            }
+
+            $this->auditService->log(
+                'STATUS_CHANGE',
+                'QueueEntry',
+                $queueEntryId,
+                "Cancelled Token #" . ($entry['token_number'] ?? $queueEntryId) . ". Reason: " . ($reason ?: 'None stated'),
+                userId: $cancelledBy
+            );
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log("Failed to cancel queue token: " . $e->getMessage());
             return false;
         }
     }
@@ -382,10 +452,22 @@ class QueueService {
     }
 
     /**
-     * Retrieve live queue for a clinic/doctor with order priority:
-     * 1. emergency, 2. urgent, 3. normal, then by token number
+     * Retrieve live queue with department, doctor, priority, status, and text search filters.
+     * Ordering rule:
+     * 1. in_consultation (top, actively with doctor in room)
+     * 2. called (second, on way to room)
+     * 3. waiting (third, prioritized by triage urgency: emergency -> urgent -> normal; sub-sorted by check_in_time ASC, then token_number ASC)
+     * 4. completed (fourth)
+     * 5. cancelled (last)
      */
-    public function getLiveQueue(?int $doctorId = null, ?int $departmentId = null, ?string $date = null): array {
+    public function getLiveQueue(
+        ?int $doctorId = null,
+        ?int $departmentId = null,
+        ?string $date = null,
+        ?string $priority = null,
+        ?string $status = null,
+        ?string $search = null
+    ): array {
         $qdate = $date ?? date('Y-m-d');
         $sql = "
             SELECT 
@@ -409,29 +491,62 @@ class QueueService {
         ";
         $params = ['qdate' => $qdate];
 
-        if ($doctorId) {
+        if (!empty($doctorId)) {
             $sql .= " AND qe.doctor_id = :doc_id";
             $params['doc_id'] = $doctorId;
         }
-        if ($departmentId) {
+        if (!empty($departmentId)) {
             $sql .= " AND qe.department_id = :dept_id";
             $params['dept_id'] = $departmentId;
         }
+        if (!empty($priority)) {
+            $sql .= " AND qe.priority_level = :priority";
+            $params['priority'] = strtolower(trim($priority));
+        }
+        if (!empty($status)) {
+            $sql .= " AND qe.status = :status";
+            $params['status'] = strtolower(trim($status));
+        }
+        if (!empty($search)) {
+            $searchTrim = trim($search);
+            $searchLike = '%' . $searchTrim . '%';
+            $sql .= " AND (
+                p.first_name LIKE :s1 
+                OR p.last_name LIKE :s2 
+                OR p.patient_id LIKE :s3 
+                OR CONCAT(p.first_name, ' ', p.last_name) LIKE :s4 
+                OR qe.token_number LIKE :s5
+            )";
+            $params['s1'] = $searchLike;
+            $params['s2'] = $searchLike;
+            $params['s3'] = $searchLike;
+            $params['s4'] = $searchLike;
+            $params['s5'] = $searchLike;
+        }
 
-        // Custom order: emergency first, then urgent, then normal; then by token_number
         $sql .= "
             ORDER BY 
               CASE qe.status
                 WHEN 'in_consultation' THEN 1
                 WHEN 'called' THEN 2
                 WHEN 'waiting' THEN 3
-                ELSE 4
-              END,
-              CASE qe.priority_level
-                WHEN 'emergency' THEN 1
-                WHEN 'urgent' THEN 2
-                ELSE 3
-              END,
+                WHEN 'completed' THEN 4
+                WHEN 'cancelled' THEN 5
+                ELSE 6
+              END ASC,
+              CASE 
+                WHEN qe.status = 'waiting' THEN
+                  CASE qe.priority_level
+                    WHEN 'emergency' THEN 1
+                    WHEN 'urgent' THEN 2
+                    ELSE 3
+                  END
+                ELSE 0
+              END ASC,
+              CASE 
+                WHEN qe.status = 'waiting' THEN qe.check_in_time
+                ELSE '9999-12-31'
+              END ASC,
               qe.token_number ASC
         ";
 

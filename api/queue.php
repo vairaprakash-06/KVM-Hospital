@@ -14,9 +14,29 @@ require_once __DIR__ . '/../app/services/QueueService.php';
 
 $doctorId = !empty($_GET['doctor_id']) ? (int)$_GET['doctor_id'] : null;
 $departmentId = !empty($_GET['department_id']) ? (int)$_GET['department_id'] : null;
+$priority = !empty($_GET['priority']) ? trim($_GET['priority']) : null;
+$status = !empty($_GET['status']) ? trim($_GET['status']) : null;
+$search = !empty($_GET['search']) ? trim($_GET['search']) : null;
 
 $queueService = new QueueService();
-$entries = $queueService->getLiveQueue($doctorId, $departmentId);
+$entries = $queueService->getLiveQueue($doctorId, $departmentId, null, $priority, $status, $search);
+
+// Dynamic KPI counts for response
+$waitingCount = 0;
+$inConsultCount = 0;
+$calledCount = 0;
+$totalWait = 0;
+foreach ($entries as $e) {
+    if ($e['status'] === 'waiting') {
+        $waitingCount++;
+        $totalWait += (int)$e['estimated_wait_time_minutes'];
+    } elseif ($e['status'] === 'in_consultation') {
+        $inConsultCount++;
+    } elseif ($e['status'] === 'called') {
+        $calledCount++;
+    }
+}
+$avgWait = $waitingCount > 0 ? round($totalWait / $waitingCount) : 0;
 
 // Render HTML table snippet for live DOM replacement
 ob_start();
@@ -25,14 +45,14 @@ ob_start();
     <tr>
         <td colspan="8" class="text-center py-4 text-muted">
             <i class="bi bi-inbox fs-3 d-block mb-1"></i>
-            No active queue tokens for today. Click "Check-In Patient" to generate a token.
+            No active queue tokens match your selected criteria.
         </td>
     </tr>
 <?php else: ?>
     <?php foreach ($entries as $q): ?>
         <tr>
             <td>
-                <span class="fs-5 fw-bold <?= $q['status'] === 'in_consultation' ? 'text-success' : ($q['status'] === 'called' ? 'text-warning' : 'text-primary') ?>">
+                <span class="fs-5 fw-bold <?= $q['status'] === 'in_consultation' ? 'text-success' : ($q['status'] === 'called' ? 'text-warning' : ($q['status'] === 'cancelled' ? 'text-danger' : 'text-primary')) ?>">
                     #<?= e($q['token_number']) ?>
                 </span>
             </td>
@@ -62,7 +82,7 @@ ob_start();
             <td>
                 <?php if ($q['status'] === 'in_consultation'): ?>
                     <span class="text-success fw-bold"><i class="bi bi-check2-circle me-1"></i>In Room</span>
-                <?php elseif ($q['status'] === 'completed'): ?>
+                <?php elseif ($q['status'] === 'completed' || $q['status'] === 'cancelled'): ?>
                     <span class="text-muted">—</span>
                 <?php else: ?>
                     <span class="fw-semibold text-secondary">~<?= (int)$q['estimated_wait_time_minutes'] ?> mins</span>
@@ -80,6 +100,7 @@ ob_start();
                                 <input type="hidden" name="action" value="call_patient">
                                 <input type="hidden" name="queue_entry_id" value="<?= $q['id'] ?>">
                                 <input type="hidden" name="doctor_id" value="<?= $q['doctor_id'] ?>">
+                                <input type="hidden" name="department_id" value="<?= $q['department_id'] ?>">
                                 <button type="submit" class="btn btn-outline-warning btn-sm" title="Call Patient">
                                     <i class="bi bi-megaphone"></i> Call
                                 </button>
@@ -90,6 +111,7 @@ ob_start();
                                 <input type="hidden" name="action" value="start_consultation">
                                 <input type="hidden" name="queue_entry_id" value="<?= $q['id'] ?>">
                                 <input type="hidden" name="doctor_id" value="<?= $q['doctor_id'] ?>">
+                                <input type="hidden" name="department_id" value="<?= $q['department_id'] ?>">
                                 <button type="submit" class="btn btn-outline-success btn-sm" title="Start Consultation">
                                     <i class="bi bi-play-circle"></i> Start
                                 </button>
@@ -100,16 +122,26 @@ ob_start();
                                 <input type="hidden" name="action" value="complete_consultation">
                                 <input type="hidden" name="queue_entry_id" value="<?= $q['id'] ?>">
                                 <input type="hidden" name="doctor_id" value="<?= $q['doctor_id'] ?>">
+                                <input type="hidden" name="department_id" value="<?= $q['department_id'] ?>">
                                 <button type="submit" class="btn btn-success btn-sm" title="Complete Consultation">
                                     <i class="bi bi-check-circle"></i> Finish
                                 </button>
                             </form>
                         <?php endif; ?>
 
-                        <button type="button" class="btn btn-outline-danger btn-sm" 
-                                onclick="openPriorityModal(<?= $q['id'] ?>, <?= $q['token_number'] ?>, '<?= e($q['priority_level']) ?>')">
-                            <i class="bi bi-arrow-up-circle"></i> Priority
-                        </button>
+                        <?php if (in_array($q['status'], ['waiting', 'called', 'in_consultation'])): ?>
+                            <button type="button" class="btn btn-outline-danger btn-sm" 
+                                    onclick="openPriorityModal(<?= $q['id'] ?>, <?= $q['token_number'] ?>, '<?= e($q['priority_level']) ?>')">
+                                <i class="bi bi-arrow-up-circle"></i> Priority
+                            </button>
+                        <?php endif; ?>
+
+                        <?php if (in_array($q['status'], ['waiting', 'called'])): ?>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                    onclick="openCancelModal(<?= $q['id'] ?>, <?= $q['token_number'] ?>, '<?= e($q['patient_first_name'] . ' ' . $q['patient_last_name']) ?>')">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
             </td>
@@ -122,5 +154,9 @@ $html = ob_get_clean();
 json_response([
     'success' => true,
     'count'   => count($entries),
+    'waiting' => $waitingCount,
+    'in_consult' => $inConsultCount,
+    'called' => $calledCount,
+    'avg_wait' => $avgWait,
     'html'    => $html
 ]);

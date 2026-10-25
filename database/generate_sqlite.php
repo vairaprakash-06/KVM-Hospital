@@ -333,6 +333,10 @@ echo "5. Scaling departments data (178 Doctors, 356 Staff, 2,670 Appointments)..
 require_once __DIR__ . '/seed_departments_scale.php';
 seed_departments_scale($pdo);
 
+echo "6. Seeding department-wise patient queues (45 queue records)...\n";
+require_once __DIR__ . '/seed_department_queues.php';
+seed_department_queues($pdo);
+
 echo "Successfully generated {$sqliteFile} (" . filesize($sqliteFile) . " bytes) with {$importedCount} statements.\n";
 
 
