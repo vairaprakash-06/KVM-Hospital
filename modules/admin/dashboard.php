@@ -164,6 +164,130 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
     </div>
 </div>
 
+<!-- Operational Stations & Clinical Desks (Integrated Under Admin Login) -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <div>
+                <h6 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-hospital-fill text-primary me-2"></i>Hospital Operational Stations &amp; Clinical Desks
+                </h6>
+                <small class="text-secondary">Administrator master access to hospital front-desk, inpatient wards, diagnostics, dispensary, and cashiers</small>
+            </div>
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 small">
+                <i class="bi bi-shield-lock-fill me-1"></i>All Access &bull; Admin Exclusive
+            </span>
+        </div>
+
+        <div class="row g-3">
+            <!-- 1. Reception Desk -->
+            <div class="col-md-4 col-lg">
+                <div class="nexus-card h-100 p-3 border hover-shadow transition-all d-flex flex-column justify-content-between" style="border-top: 3px solid #0284c7 !important;">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="p-2 rounded bg-info bg-opacity-10 text-info">
+                                <i class="bi bi-person-workspace fs-5"></i>
+                            </div>
+                            <span class="badge bg-info text-dark small">Live OPD</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">Reception Desk</h6>
+                        <p class="text-muted small mb-3" style="font-size: 0.8rem; line-height: 1.35;">
+                            OPD patient registration, appointment check-ins, and QueueFlow token dispensing.
+                        </p>
+                    </div>
+                    <a href="../reception/dashboard.php" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Open Desk
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. Nursing Station -->
+            <div class="col-md-4 col-lg">
+                <div class="nexus-card h-100 p-3 border hover-shadow transition-all d-flex flex-column justify-content-between" style="border-top: 3px solid #f59e0b !important;">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="p-2 rounded bg-warning bg-opacity-10 text-warning">
+                                <i class="bi bi-bandaid fs-5"></i>
+                            </div>
+                            <span class="badge bg-warning text-dark small">Ward Care</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">Nursing Station</h6>
+                        <p class="text-muted small mb-3" style="font-size: 0.8rem; line-height: 1.35;">
+                            Inpatient bed oversight, BedMatrix allocations, vitals recording &amp; care rounds.
+                        </p>
+                    </div>
+                    <a href="../nurse/dashboard.php" class="btn btn-sm btn-outline-warning text-dark w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Open Station
+                    </a>
+                </div>
+            </div>
+
+            <!-- 3. Diagnostic Lab -->
+            <div class="col-md-4 col-lg">
+                <div class="nexus-card h-100 p-3 border hover-shadow transition-all d-flex flex-column justify-content-between" style="border-top: 3px solid #8b5cf6 !important;">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="p-2 rounded bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-eyedropper fs-5"></i>
+                            </div>
+                            <span class="badge bg-primary small"><?= $pendingLabs ?> Pending</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">Diagnostic Lab</h6>
+                        <p class="text-muted small mb-3" style="font-size: 0.8rem; line-height: 1.35;">
+                            Laboratory test orders, specimen sample intake, and diagnostic report verification.
+                        </p>
+                    </div>
+                    <a href="../laboratory/dashboard.php" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Open Lab
+                    </a>
+                </div>
+            </div>
+
+            <!-- 4. Pharmacy Unit -->
+            <div class="col-md-6 col-lg">
+                <div class="nexus-card h-100 p-3 border hover-shadow transition-all d-flex flex-column justify-content-between" style="border-top: 3px solid #ef4444 !important;">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="p-2 rounded bg-danger bg-opacity-10 text-danger">
+                                <i class="bi bi-capsule fs-5"></i>
+                            </div>
+                            <span class="badge bg-danger small"><?= $lowStockMeds ?> Low Stock</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">Pharmacy Unit</h6>
+                        <p class="text-muted small mb-3" style="font-size: 0.8rem; line-height: 1.35;">
+                            Doctor prescription dispensing, medicine formulary, and drug inventory balance.
+                        </p>
+                    </div>
+                    <a href="../pharmacy/dashboard.php" class="btn btn-sm btn-outline-danger w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Open Pharmacy
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. Billing Center -->
+            <div class="col-md-6 col-lg">
+                <div class="nexus-card h-100 p-3 border hover-shadow transition-all d-flex flex-column justify-content-between" style="border-top: 3px solid #10b981 !important;">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="p-2 rounded bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-receipt fs-5"></i>
+                            </div>
+                            <span class="badge bg-success small">Cashier Desk</span>
+                        </div>
+                        <h6 class="fw-bold mb-1">Billing Center</h6>
+                        <p class="text-muted small mb-3" style="font-size: 0.8rem; line-height: 1.35;">
+                            Patient invoices, receipt generation, insurance claims, and discharge clearances.
+                        </p>
+                    </div>
+                    <a href="../billing/dashboard.php" class="btn btn-sm btn-outline-success w-100">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Open Billing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Differentiated Engines Quick Access -->
 <div class="row g-3 mb-4">
     <div class="col-12">

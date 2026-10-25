@@ -62,8 +62,8 @@ function has_permission(string $permissionKey): bool {
         return false;
     }
 
-    // Super Admin has all permissions automatically
-    if (has_role('super_admin')) {
+    // Super Admin & Hospital Admin have all permissions automatically
+    if (has_role('super_admin', 'hospital_admin')) {
         return true;
     }
 

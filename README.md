@@ -196,19 +196,15 @@ Get-Content database/seed.sql | mysql -u root kvm_hospital
 ## 15. Demo Accounts
 All pre-seeded demo accounts share the password: **`Password123!`**
 
-| Role | Username | Email | Accessible Dashboard |
-|---|---|---|---|
-| **Super Admin** | `superadmin` | `superadmin@nexuscare.org` | Full configuration, users, roles, audit |
-| **Hospital Admin**| `admin` | `admin@nexuscare.org` | Operations, wards, FlowLens, analytics |
-| **Doctor** | `dr.sharma` | `dr.sharma@nexuscare.org` | Assigned appointments, consultations, prescriptions |
-| **Receptionist** | `receptionist` | `reception@nexuscare.org`| Patient registration, appointment booking, check-in |
-| **Nurse** | `nurse.sarah` | `nurse.sarah@nexuscare.org`| Vitals, BedMatrix allocation, sanitization |
-| **Lab Technician**| `labtech.vikram`| `lab.vikram@nexuscare.org` | Specimen collection, test results verification |
-| **Pharmacist** | `pharma.rohit` | `pharmacy@nexuscare.org` | Medicine catalog, dispensing, stock alerts |
-| **Billing Staff** | `billing.sneha` | `billing@nexuscare.org` | Invoicing, payment recording, receipts |
-| **Patient** | `patient.arun` | `arun.kumar@gmail.com` | Personal appointments, queue token, CareTrail |
+Access is consolidated into three primary entry points, with the Hospital Administrator having universal control over all clinical stations:
 
-*Note: The login page includes quick-fill buttons for development and presentation.*
+| Portal / Role | Username | Email | Operational Access & Capabilities |
+|---|---|---|---|
+| **Hospital Administrator** | `admin` (or `superadmin`) | `admin@nexuscare.org` | **Universal Master Access:** Hospital Command Center, BedMatrix, QueueFlow, CareTrail, FlowLens, TrustLedger, plus **all 5 operational stations**: Reception Desk, Nursing Station, Diagnostic Lab, Pharmacy Unit, and Billing Center. |
+| **Doctor** | `dr.sharma` | `dr.sharma@nexuscare.org` | Clinical Workspace: Assigned appointments, OPD patient consultations, electronic prescriptions, diagnostic test orders. |
+| **Patient** | `patient.arun` | `arun.verma@example.com` | Patient Self-Service Portal: Personal appointment scheduling, live queue tracking, CareTrail journey dossier, lab reports, billing invoices. |
+
+*Note: Direct staff logins (Receptionist, Nurse, Lab Tech, Pharmacist, Billing) are consolidated directly into the Administrator login. The login page provides quick-fill buttons for Administrator, Doctor, and Patient.*
 
 ---
 

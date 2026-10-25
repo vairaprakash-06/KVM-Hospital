@@ -103,6 +103,36 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
     </div>
 </div>
 
+<!-- Operational Stations & Clinical Desks Master Hub -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="nexus-card p-3 bg-light border">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="fw-bold text-dark">
+                    <i class="bi bi-hospital-fill text-primary me-1"></i>Operational Stations &amp; Clinical Desks:
+                </span>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="../reception/dashboard.php" class="btn btn-sm btn-outline-info text-dark">
+                        <i class="bi bi-person-workspace me-1"></i>Reception Desk
+                    </a>
+                    <a href="../nurse/dashboard.php" class="btn btn-sm btn-outline-warning text-dark">
+                        <i class="bi bi-bandaid me-1"></i>Nursing Station
+                    </a>
+                    <a href="../laboratory/dashboard.php" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-eyedropper me-1"></i>Diagnostic Lab
+                    </a>
+                    <a href="../pharmacy/dashboard.php" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-capsule me-1"></i>Pharmacy Unit
+                    </a>
+                    <a href="../billing/dashboard.php" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-receipt me-1"></i>Billing Center
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Security Surveillance and Role Changes -->
 <div class="row g-4">
     <div class="col-lg-6">

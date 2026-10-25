@@ -1,19 +1,24 @@
 # KVM Hospital Management System — NexusCare
-## Role-Based Access Control (RBAC) Permissions Matrix
+## Role-Based Access Control (RBAC) & Consolidated Portal Architecture
 
-NexusCare implements strict server-side authorization. Access permissions are validated on every request via `requirePermission()` and `requireRole()`, never relying on client-side UI visibility alone.
+NexusCare implements strict server-side authorization. Access permissions are validated on every request via `require_role()` and `require_permission()`.
 
----
+### Consolidated 3-Portal Architecture
+To optimize administrative workflow and governance:
+1. **Hospital Administrator (Universal All-Access Portal)**:
+   - Full master access to all hospital modules, command centers, and operational stations:
+     - **Reception Desk** (`/modules/reception/dashboard.php`)
+     - **Nursing Station** (`/modules/nurse/dashboard.php`)
+     - **Diagnostic Lab** (`/modules/laboratory/dashboard.php`)
+     - **Pharmacy Unit** (`/modules/pharmacy/dashboard.php`)
+     - **Billing Center** (`/modules/billing/dashboard.php`)
+     - BedMatrix, QueueFlow, CareTrail, FlowLens, and TrustLedger.
+2. **Doctor (Clinical Workspace Portal)**:
+   - OPD consultation queue, patient clinical dossier, electronic prescriptions, lab order placement.
+3. **Patient (Longitudinal Self-Service Portal)**:
+   - Appointment booking, personal CareTrail timeline, test results, billing history, payment receipts.
 
-### Master Permissions Matrix
-
-| Operational Capability | Super Admin | Hospital Admin | Doctor | Receptionist | Nurse | Lab Tech | Pharmacist | Billing | Patient |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Authentication & Users** | | | | | | | | | |
-| Manage System Users & Passwords | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Assign User Roles & Permissions | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| View System Audit Logs (TrustLedger) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| View Security Login Monitor | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+> **Login Surface Restriction**: Individual staff logins (Receptionist, Nurse, Lab Tech, Pharmacist, Billing Staff) are consolidated directly into the Administrator login. Direct login access is exclusively reserved for **Admin**, **Doctor**, and **Patient**.
 | **Organization & Master Data** | | | | | | | | | |
 | Manage Departments & Wings | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Manage Doctor Profiles & Schedules | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |

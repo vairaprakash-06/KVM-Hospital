@@ -51,45 +51,45 @@ $currentScript = $_SERVER['SCRIPT_NAME'] ?? '';
             </a>
         <?php endif; ?>
 
-        <?php if ($primaryRole === 'receptionist'): ?>
-            <a href="<?= BASE_URL ?>/modules/reception/dashboard.php" class="nav-link <?= strpos($currentScript, 'reception/dashboard') !== false ? 'active' : '' ?>">
-                <i class="bi bi-person-workspace"></i>
-                <span>Reception Desk</span>
-            </a>
-        <?php endif; ?>
-
-        <?php if ($primaryRole === 'nurse'): ?>
-            <a href="<?= BASE_URL ?>/modules/nurse/dashboard.php" class="nav-link <?= strpos($currentScript, 'nurse/dashboard') !== false ? 'active' : '' ?>">
-                <i class="bi bi-bandaid"></i>
-                <span>Nursing Station</span>
-            </a>
-        <?php endif; ?>
-
-        <?php if ($primaryRole === 'lab_technician'): ?>
-            <a href="<?= BASE_URL ?>/modules/laboratory/dashboard.php" class="nav-link <?= strpos($currentScript, 'laboratory/dashboard') !== false ? 'active' : '' ?>">
-                <i class="bi bi-eyedropper"></i>
-                <span>Diagnostic Lab</span>
-            </a>
-        <?php endif; ?>
-
-        <?php if ($primaryRole === 'pharmacist'): ?>
-            <a href="<?= BASE_URL ?>/modules/pharmacy/dashboard.php" class="nav-link <?= strpos($currentScript, 'pharmacy/dashboard') !== false ? 'active' : '' ?>">
-                <i class="bi bi-capsule"></i>
-                <span>Pharmacy Unit</span>
-            </a>
-        <?php endif; ?>
-
-        <?php if ($primaryRole === 'billing_staff'): ?>
-            <a href="<?= BASE_URL ?>/modules/billing/dashboard.php" class="nav-link <?= strpos($currentScript, 'billing/dashboard') !== false ? 'active' : '' ?>">
-                <i class="bi bi-receipt"></i>
-                <span>Billing Center</span>
-            </a>
-        <?php endif; ?>
-
         <?php if ($primaryRole === 'patient'): ?>
             <a href="<?= BASE_URL ?>/modules/patient/dashboard.php" class="nav-link <?= strpos($currentScript, 'patient/dashboard') !== false ? 'active' : '' ?>">
                 <i class="bi bi-person-badge"></i>
                 <span>Patient Portal</span>
+            </a>
+        <?php endif; ?>
+
+        <!-- Operational Stations & Desks (Admin Universal Hub) -->
+        <?php if (in_array($primaryRole, ['super_admin', 'hospital_admin'], true)): ?>
+            <span class="nav-section-label mt-2">Operational Stations</span>
+
+            <a href="<?= BASE_URL ?>/modules/reception/dashboard.php" class="nav-link <?= strpos($currentScript, 'reception/dashboard') !== false ? 'active' : '' ?>">
+                <i class="bi bi-person-workspace"></i>
+                <span>Reception Desk</span>
+                <span class="feature-pill">Live OPD</span>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/nurse/dashboard.php" class="nav-link <?= strpos($currentScript, 'nurse/dashboard') !== false ? 'active' : '' ?>">
+                <i class="bi bi-bandaid"></i>
+                <span>Nursing Station</span>
+                <span class="feature-pill">Ward Care</span>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/laboratory/dashboard.php" class="nav-link <?= strpos($currentScript, 'laboratory/dashboard') !== false ? 'active' : '' ?>">
+                <i class="bi bi-eyedropper"></i>
+                <span>Diagnostic Lab</span>
+                <span class="feature-pill">Reports</span>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/pharmacy/dashboard.php" class="nav-link <?= strpos($currentScript, 'pharmacy/dashboard') !== false ? 'active' : '' ?>">
+                <i class="bi bi-capsule"></i>
+                <span>Pharmacy Unit</span>
+                <span class="feature-pill">Dispensary</span>
+            </a>
+
+            <a href="<?= BASE_URL ?>/modules/billing/dashboard.php" class="nav-link <?= strpos($currentScript, 'billing/dashboard') !== false ? 'active' : '' ?>">
+                <i class="bi bi-receipt"></i>
+                <span>Billing Center</span>
+                <span class="feature-pill">Cashier</span>
             </a>
         <?php endif; ?>
 

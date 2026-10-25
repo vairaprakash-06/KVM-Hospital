@@ -77,7 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $primaryRole = $roleNames[0];
 
-                // 5. Fetch Permissions for these roles
+                // Role Restriction: Keep login ONLY for Admin, Doctor, and Patient
+                $allowedLoginRoles = ['super_admin', 'hospital_admin', 'doctor', 'patient'];
+                $hasAllowedRole = !empty(array_intersect($roleNames, $allowedLoginRoles));
+
+                if (!$hasAllowedRole) {
+                    $auditService->recordLoginAttempt($identifier, 'failed');
+                    $errorMessage = "Access Restricted: Operational stations (Reception Desk, Nursing Station, Diagnostic Lab, Pharmacy Unit, Billing Center) are consolidated under the Administrator portal. Please sign in with an Administrator account.";
+                } else {
+                    // 5. Fetch Permissions for these roles
                 $permStmt = $db->prepare("
                     SELECT DISTINCT p.permission_key
                     FROM `user_role_assignments` ura
@@ -159,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     redirect(get_dashboard_route_for_role($primaryRole));
                 }
+            }
             }
         } else {
             // Failed password or user not found
@@ -279,7 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-form-side">
         <div class="mb-4">
             <h4 class="fw-bold text-dark mb-1">Sign In to Your Workspace</h4>
-            <p class="text-muted small">One common portal for Doctors, Nurses, Staff, and Patients</p>
+            <p class="text-muted small">One common portal for Hospital Admin, Doctors, and Patients</p>
         </div>
 
         <?php if (!empty($errorMessage)): ?>
@@ -291,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="alert border-0 py-2 px-3 small d-flex align-items-center gap-2 mb-3" style="background: rgba(14, 165, 233, 0.08); border-left: 3px solid #0284c7 !important; color: #0369a1; border-radius: 8px;">
                 <i class="bi bi-check-circle-fill text-primary fs-6"></i>
                 <div class="flex-grow-1" style="font-size: 0.8rem; line-height: 1.35;">
-                    <strong>Live Demonstration Database Active:</strong> Pre-seeded with 89 departments & 9 roles. Click any role shortcut below to sign in instantly!
+                    <strong>Live Demonstration Database Active:</strong> Pre-seeded with 89 departments, 178 doctors &amp; 2,670 appointments across Admin, Doctor, and Patient portals.
                 </div>
             </div>
         <?php endif; ?>
@@ -304,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
                     <input type="text" class="form-control border-start-0" id="identifier" name="identifier" 
-                           placeholder="e.g. dr.sharma or admin@nexuscare.org" required autofocus
+                           placeholder="e.g. admin or dr.sharma" required autofocus
                            value="<?= e($_POST['identifier'] ?? '') ?>">
                 </div>
             </div>
@@ -328,23 +337,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="register.php" class="small fw-semibold text-decoration-none text-primary ms-1">Register Portal Account</a>
         </div>
 
-        <!-- Quick Demo Accounts Shortcuts for Viva & Evaluation -->
+        <!-- Quick Demo Accounts Shortcuts for Viva & Evaluation (Admin, Doctor, Patient Only) -->
         <div class="bg-light p-3 rounded border">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-secondary text-uppercase" style="font-size: 0.68rem; letter-spacing: 0.05em;">
-                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Viva Demo Accounts (Password: Password123!)
+                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i>VIVA DEMO ACCOUNTS (PASSWORD: PASSWORD123!)
                 </span>
             </div>
-            <div class="d-flex flex-wrap gap-1">
-                <span class="badge bg-dark demo-pill" onclick="fillCreds('superadmin', 'Password123!')">Super Admin</span>
-                <span class="badge bg-primary demo-pill" onclick="fillCreds('admin', 'Password123!')">Hospital Admin</span>
-                <span class="badge bg-info text-dark demo-pill" onclick="fillCreds('dr.sharma', 'Password123!')">Dr. Sharma (Cardio)</span>
-                <span class="badge bg-secondary demo-pill" onclick="fillCreds('receptionist', 'Password123!')">Receptionist</span>
-                <span class="badge bg-warning text-dark demo-pill" onclick="fillCreds('nurse.sarah', 'Password123!')">Nurse</span>
-                <span class="badge bg-success demo-pill" onclick="fillCreds('labtech.vikram', 'Password123!')">Lab Tech</span>
-                <span class="badge bg-danger demo-pill" onclick="fillCreds('pharma.rohit', 'Password123!')">Pharmacist</span>
-                <span class="badge bg-secondary demo-pill" onclick="fillCreds('billing.sneha', 'Password123!')">Billing Staff</span>
-                <span class="badge bg-info demo-pill" onclick="fillCreds('patient.arun', 'Password123!')">Patient Arun</span>
+            <div class="d-flex flex-wrap gap-2 mb-2">
+                <span class="badge bg-dark demo-pill px-3 py-2" onclick="fillCreds('superadmin', 'Password123!')" title="Universal Master Governance">
+                    <i class="bi bi-shield-lock me-1"></i>Super Admin
+                </span>
+                <span class="badge bg-primary demo-pill px-3 py-2" onclick="fillCreds('admin', 'Password123!')" title="Full Hospital & All Desks Access">
+                    <i class="bi bi-speedometer2 me-1"></i>Hospital Admin
+                </span>
+                <span class="badge bg-info text-dark demo-pill px-3 py-2" onclick="fillCreds('dr.sharma', 'Password123!')" title="Doctor Workspace">
+                    <i class="bi bi-heart-pulse me-1"></i>Dr. Sharma (Cardio)
+                </span>
+                <span class="badge bg-secondary text-white demo-pill px-3 py-2" onclick="fillCreds('patient.arun', 'Password123!')" title="Patient Self-Service Portal">
+                    <i class="bi bi-person-badge me-1"></i>Patient Arun
+                </span>
+            </div>
+            <div class="p-2 rounded bg-white border small text-muted" style="font-size: 0.72rem; line-height: 1.35;">
+                <i class="bi bi-shield-check text-primary me-1"></i>
+                <strong>Administrator Master Access:</strong> Reception Desk, Nursing Station, Diagnostic Lab, Pharmacy Unit, and Billing Center are unified directly under Admin login.
             </div>
         </div>
     </div>

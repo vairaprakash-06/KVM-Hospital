@@ -14,6 +14,11 @@ require_once __DIR__ . '/auth.php';
 function require_role(string ...$roles): void {
     require_auth();
 
+    // Universal Access: Super Admin and Hospital Admin have unrestricted access to all hospital sections
+    if (has_role('super_admin', 'hospital_admin')) {
+        return;
+    }
+
     if (!has_role(...$roles)) {
         http_response_code(403);
         $userRole = $_SESSION['user']['primary_role'] ?? 'user';
@@ -27,6 +32,11 @@ function require_role(string ...$roles): void {
  */
 function require_permission(string $permissionKey): void {
     require_auth();
+
+    // Universal Access: Super Admin and Hospital Admin possess all permissions
+    if (has_role('super_admin', 'hospital_admin')) {
+        return;
+    }
 
     if (!has_permission($permissionKey)) {
         http_response_code(403);
