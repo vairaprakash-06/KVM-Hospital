@@ -329,5 +329,10 @@ if (file_exists($deptSeedFile)) {
     echo "Successfully verified {$totalDeptsInSqlite} hospital departments in SQLite database.\n";
 }
 
+echo "5. Scaling departments data (178 Doctors, 356 Staff, 2,670 Appointments)...\n";
+require_once __DIR__ . '/seed_departments_scale.php';
+seed_departments_scale($pdo);
+
 echo "Successfully generated {$sqliteFile} (" . filesize($sqliteFile) . " bytes) with {$importedCount} statements.\n";
+
 

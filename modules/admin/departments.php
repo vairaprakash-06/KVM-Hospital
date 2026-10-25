@@ -306,6 +306,7 @@ $activeDepts   = 0;
 $inactiveDepts = 0;
 $totalDoctors  = 0;
 $totalStaff    = 0;
+$totalAppts    = 0;
 
 foreach ($departments as $d) {
     if ($d['status'] === 'active') {
@@ -315,6 +316,7 @@ foreach ($departments as $d) {
     }
     $totalDoctors += (int)$d['doctor_count'];
     $totalStaff   += (int)$d['staff_count'];
+    $totalAppts   += (int)$d['appointment_count'];
 }
 
 $pageTitle = 'Hospital Department Management';
@@ -326,7 +328,7 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
     <div>
         <h4 class="fw-bold mb-1">Hospital Department Management</h4>
         <p class="text-secondary small mb-0">
-            Enterprise master registry of all <?= $totalDepts ?> clinical divisions, surgical specialties, diagnostic units, and telephone directories
+            Overview of all <?= $totalDepts ?> clinical divisions, staffing ratios (<?= $totalDoctors ?> Doctors, <?= $totalStaff ?> Staff), and <?= number_format($totalAppts) ?> scheduled consultations
         </p>
     </div>
     
@@ -385,47 +387,58 @@ require_once __DIR__ . '/../../app/views/layouts/header.php';
 
 <!-- Department KPI Metrics -->
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="nexus-card p-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background: rgba(11, 118, 119, 0.12); color: #0b7677; width: 48px; height: 48px;">
+    <div class="col-6 col-md">
+        <div class="nexus-card p-3 d-flex align-items-center gap-2 h-100">
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(11, 118, 119, 0.12); color: #0b7677; width: 44px; height: 44px;">
                 <i class="bi bi-hospital fs-5"></i>
             </div>
             <div>
-                <div class="text-muted small">Total Master Units</div>
-                <div class="fs-4 fw-bold text-dark" id="statTotalDepts"><?= $totalDepts ?></div>
+                <div class="text-muted small" style="font-size: 0.75rem;">Master Units</div>
+                <div class="fs-5 fw-bold text-dark" id="statTotalDepts"><?= $totalDepts ?></div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="nexus-card p-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background: rgba(22, 163, 74, 0.12); color: #16a34a; width: 48px; height: 48px;">
+    <div class="col-6 col-md">
+        <div class="nexus-card p-3 d-flex align-items-center gap-2 h-100">
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(22, 163, 74, 0.12); color: #16a34a; width: 44px; height: 44px;">
                 <i class="bi bi-check2-circle fs-5"></i>
             </div>
             <div>
-                <div class="text-muted small">Active Clinical Units</div>
-                <div class="fs-4 fw-bold text-success" id="statActiveDepts"><?= $activeDepts ?></div>
+                <div class="text-muted small" style="font-size: 0.75rem;">Active Units</div>
+                <div class="fs-5 fw-bold text-success" id="statActiveDepts"><?= $activeDepts ?></div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="nexus-card p-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; width: 48px; height: 48px;">
+    <div class="col-6 col-md">
+        <div class="nexus-card p-3 d-flex align-items-center gap-2 h-100">
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; width: 44px; height: 44px;">
                 <i class="bi bi-heart-pulse fs-5"></i>
             </div>
             <div>
-                <div class="text-muted small">Assigned Doctors</div>
-                <div class="fs-4 fw-bold text-dark"><?= $totalDoctors ?></div>
+                <div class="text-muted small" style="font-size: 0.75rem;">Assigned Doctors</div>
+                <div class="fs-5 fw-bold text-dark"><?= $totalDoctors ?></div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="nexus-card p-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 d-flex align-items-center justify-content-center" style="background: rgba(59, 130, 246, 0.12); color: #3b82f6; width: 48px; height: 48px;">
+    <div class="col-6 col-md">
+        <div class="nexus-card p-3 d-flex align-items-center gap-2 h-100">
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(59, 130, 246, 0.12); color: #3b82f6; width: 44px; height: 44px;">
                 <i class="bi bi-people fs-5"></i>
             </div>
             <div>
-                <div class="text-muted small">Staff Deployed</div>
-                <div class="fs-4 fw-bold text-dark"><?= $totalStaff ?></div>
+                <div class="text-muted small" style="font-size: 0.75rem;">Staff Deployed</div>
+                <div class="fs-5 fw-bold text-dark"><?= $totalStaff ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md">
+        <div class="nexus-card p-3 d-flex align-items-center gap-2 h-100">
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0" style="background: rgba(147, 51, 234, 0.12); color: #9333ea; width: 44px; height: 44px;">
+                <i class="bi bi-calendar2-check fs-5"></i>
+            </div>
+            <div>
+                <div class="text-muted small" style="font-size: 0.75rem;">Consultations</div>
+                <div class="fs-5 fw-bold text-dark"><?= number_format($totalAppts) ?></div>
             </div>
         </div>
     </div>
