@@ -143,6 +143,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'logged_at'    => time()
                 ];
 
+                // Synchronize signed session cookie for serverless environments (Vercel multi-container)
+                if (function_exists('sync_session_to_cookie')) {
+                    sync_session_to_cookie();
+                }
+
                 // Update user last login
                 $db->prepare("UPDATE `users` SET `last_login_at` = NOW(), `failed_login_attempts` = 0 WHERE `id` = :uid")
                    ->execute(['uid' => $user['id']]);

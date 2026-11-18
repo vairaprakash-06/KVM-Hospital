@@ -24,9 +24,59 @@ function sanitize_input(?string $input): string {
 }
 
 /**
+ * Application security key for signing stateless cookies
+ */
+function get_app_secret(): string {
+    return getenv('APP_KEY') ?: 'kvm_hospital_nexuscare_app_secret_salt_2026';
+}
+
+/**
+ * Synchronize user session state to a secure signed cookie (serverless persistence across Vercel Lambdas)
+ */
+function sync_session_to_cookie(): void {
+    if (!headers_sent() && !empty($_SESSION['user'])) {
+        $secret = get_app_secret();
+        $payload = base64_encode(json_encode($_SESSION['user']));
+        $sig = hash_hmac('sha256', $payload, $secret);
+        $cookieVal = $payload . '.' . $sig;
+        $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+        setcookie('nexus_sess', $cookieVal, [
+            'expires'  => time() + 86400,
+            'path'     => '/',
+            'secure'   => $isSecure,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+    }
+}
+
+/**
+ * Restore user session from secure signed cookie if missing from Lambda container memory
+ */
+function restore_session_from_cookie(): void {
+    if (empty($_SESSION['user']) && !empty($_COOKIE['nexus_sess'])) {
+        $secret = get_app_secret();
+        $parts = explode('.', (string)$_COOKIE['nexus_sess'], 2);
+        if (count($parts) === 2) {
+            [$payload, $sig] = $parts;
+            if (hash_equals(hash_hmac('sha256', $payload, $secret), $sig)) {
+                $userData = json_decode(base64_decode($payload), true);
+                if (is_array($userData) && !empty($userData['id'])) {
+                    $_SESSION['user'] = $userData;
+                }
+            }
+        }
+    }
+}
+
+/**
  * Return currently authenticated user data or null
  */
 function current_user(): ?array {
+    if (empty($_SESSION['user']['id'])) {
+        restore_session_from_cookie();
+    }
     return $_SESSION['user'] ?? null;
 }
 
@@ -34,6 +84,9 @@ function current_user(): ?array {
  * Check if a user is currently logged in
  */
 function is_logged_in(): bool {
+    if (empty($_SESSION['user']['id'])) {
+        restore_session_from_cookie();
+    }
     return !empty($_SESSION['user']['id']);
 }
 

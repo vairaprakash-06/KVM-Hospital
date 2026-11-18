@@ -4,7 +4,7 @@
  */
 declare(strict_types=1);
 
-$baseUrl = 'http://127.0.0.1:8000';
+$baseUrl = getenv('TEST_BASE_URL') ?: 'http://127.0.0.1:8080';
 
 // 1. Fetch Login Page
 $opts = ['http' => ['method' => 'GET', 'follow_location' => 0]];

@@ -36,6 +36,10 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
+// Clear signed session and CSRF cookies
+setcookie('nexus_sess', '', time() - 42000, '/');
+setcookie('XSRF-TOKEN', '', time() - 42000, '/');
+
 // Destroy session
 session_destroy();
 

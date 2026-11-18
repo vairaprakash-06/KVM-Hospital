@@ -20,16 +20,34 @@ if ($appEnv === 'development') {
 }
 
 // Session configuration
+$isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+            (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     if (php_sapi_name() !== 'cli') {
+        $tmpDir = sys_get_temp_dir();
+        if (is_dir($tmpDir) && is_writable($tmpDir)) {
+            @session_save_path($tmpDir);
+        }
         ini_set('session.cookie_httponly', '1');
         ini_set('session.use_only_cookies', '1');
         ini_set('session.cookie_samesite', 'Lax');
-        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        if ($isSecure) {
             ini_set('session.cookie_secure', '1');
         }
+        session_set_cookie_params([
+            'lifetime' => 86400,
+            'path'     => '/',
+            'secure'   => $isSecure,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
     }
     @session_start();
+}
+
+if (function_exists('restore_session_from_cookie')) {
+    restore_session_from_cookie();
 }
 
 // Global Application Constants
